@@ -16,6 +16,7 @@ window.WEDDING = {
   dateLong: 'Chủ Nhật, ngày 18 tháng 10 năm 2026',
   lunar: 'Tức ngày 09 tháng 09 năm Bính Ngọ',
 
+  // `map`: link Google Maps chỉ đường; không có thì tìm theo `address`
   families: [
     {
       side: 'Nhà Trai',
@@ -23,8 +24,8 @@ window.WEDDING = {
       mother: 'Phạm Thị Tám',
       child: { role: 'Chú rể', name: 'Trần Xuân Dục' },
       events: [
-        { time: '10:00', title: 'Tiệc mời cỗ', place: 'Tư gia nhà trai', address: 'Thôn Trà Trung, Xã Hải Hưng, Tỉnh Ninh Bình' },
-        { time: '13:10', title: 'Lễ Thành Hôn', place: 'Tư gia nhà trai', address: 'Xóm 3, Xã Hải Hưng, Tỉnh Ninh Bình' }
+        { time: '10:00', title: 'Tiệc mời cỗ', place: 'Tư gia nhà trai', address: 'Thôn Trà Trung, Xã Hải Hưng, Tỉnh Ninh Bình', map: 'https://maps.app.goo.gl/ymt3UWuGMjnRz5jj8' },
+        { time: '13:10', title: 'Lễ Thành Hôn', place: 'Tư gia nhà trai', address: 'Xóm 3, Xã Hải Hưng, Tỉnh Ninh Bình', map: 'https://maps.app.goo.gl/ymt3UWuGMjnRz5jj8' }
       ]
     },
     {
@@ -33,8 +34,8 @@ window.WEDDING = {
       mother: 'Vũ Thị Đào',
       child: { role: 'Cô dâu', name: 'Lê Thu Hà' },
       events: [
-        { time: '10:00', title: 'Tiệc mời cỗ', place: 'Tư gia nhà gái', address: 'Thôn Hội Khê, Xã Hải Hưng, Tỉnh Ninh Bình' },
-        { time: '13:15', title: 'Lễ Vu Quy', place: 'Tư gia nhà gái', address: 'Thôn Hội Khê, Xã Hải Hưng, Tỉnh Ninh Bình' }
+        { time: '10:00', title: 'Tiệc mời cỗ', place: 'Tư gia nhà gái', address: 'Thôn Hội Khê, Xã Hải Hưng, Tỉnh Ninh Bình', map: 'https://maps.app.goo.gl/jAY9m7FCu2evBTri9' },
+        { time: '13:15', title: 'Lễ Vu Quy', place: 'Tư gia nhà gái', address: 'Thôn Hội Khê, Xã Hải Hưng, Tỉnh Ninh Bình', map: 'https://maps.app.goo.gl/jAY9m7FCu2evBTri9' }
       ]
     }
   ],
@@ -42,8 +43,8 @@ window.WEDDING = {
   // Ảnh do scripts/convert_webp.py tạo trong images/ (IMG_xxxx-800/-1600/-3200.webp)
   galleries: [
     {
-      key: 'khu-vuon',
-      title: 'Khu Vườn',
+      key: 'phim-truong',
+      title: 'Phim Trường',
       cover: 'images/IMG_6485',
       photos: [
         { id: 'images/IMG_6480', cap: 'Dạo bước trong vườn' },

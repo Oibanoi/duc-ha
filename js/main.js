@@ -543,7 +543,7 @@
           <div class="event">
             <div class="event__head"><span class="event__time">${ev.time}</span><span class="event__title">${ev.title}</span></div>
             <p class="event__addr">${ev.place} — ${ev.address}</p>
-            <a class="link link--map" href="${mapUrl(ev.address)}" target="_blank" rel="noopener">Mở bản đồ <span aria-hidden="true">↗</span></a>
+            <a class="link link--map" href="${ev.map || mapUrl(ev.address)}" target="_blank" rel="noopener">Mở bản đồ <span aria-hidden="true">↗</span></a>
           </div>`).join('')}
       </div>
     </article>`).join('');
