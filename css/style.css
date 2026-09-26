@@ -223,9 +223,32 @@ ol { padding: 0; list-style: none; }
 .nav__menu[aria-expanded="true"] .nav__menu-icon i:last-child { transform: translateY(-3.5px) rotate(-45deg); }
 .nav.menu-open { color: var(--color-foreground); background: transparent; border-color: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; }
 
+/* Nút nhạc: 3 vạch, nhấp nhô khi đang phát */
+.nav__music {
+  display: inline-grid; place-items: center;
+  width: 44px; height: 44px; margin-left: auto; margin-right: var(--s-8);
+  position: relative; z-index: 2;
+}
+.nav__music-bars { display: flex; align-items: flex-end; gap: 3px; height: 14px; }
+.nav__music-bars i {
+  display: block; width: 2px; height: 4px; background: currentColor;
+  transition: height var(--t-normal) var(--ease);
+}
+.nav__music.is-playing .nav__music-bars i { animation: eq 1s var(--ease) infinite alternate; }
+.nav__music.is-playing .nav__music-bars i:nth-child(1) { animation-delay: -0.4s; }
+.nav__music.is-playing .nav__music-bars i:nth-child(2) { animation-delay: -0.8s; }
+.nav__music.is-playing .nav__music-bars i:nth-child(3) { animation-delay: -0.2s; }
+@keyframes eq { from { height: 3px; } to { height: 14px; } }
+@media (prefers-reduced-motion: reduce) {
+  .nav__music.is-playing .nav__music-bars i { animation: none; height: 12px; }
+  .nav__music.is-playing .nav__music-bars i:nth-child(2) { height: 8px; }
+}
+
 @media (min-width: 1100px) {
   .nav__links { display: flex; }
   .nav__menu { display: none; }
+  .nav__links { margin-left: auto; }
+  .nav__music { margin: 0 0 0 var(--s-24); }
 }
 
 .menu {

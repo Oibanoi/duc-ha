@@ -587,4 +587,56 @@
 
   /* The End → all photos */
   $('#allPhotosBtn').addEventListener('click', () => openLightbox(0, { sheet: true }));
+  /* ---------------------------------------------------------
+     Nhạc nền: không tự phát — khách bấm nút nhạc để bật/tắt
+     --------------------------------------------------------- */
+  const bgm = $('#bgm');
+  const musicBtn = $('#musicBtn');
+  const MUSIC_VOLUME = 0.6;
+  let wantMusic = false;
+  let fadeRaf = 0;
+
+  function setMusicUI(on) {
+    musicBtn.classList.toggle('is-playing', on);
+    musicBtn.setAttribute('aria-pressed', String(on));
+    const label = on ? 'Tắt nhạc' : 'Bật nhạc';
+    musicBtn.setAttribute('aria-label', label);
+    musicBtn.title = label;
+  }
+
+  // Tăng/giảm âm lượng mượt (iOS bỏ qua volume — khi đó chỉ bật/tắt)
+  function fadeTo(target, ms, done) {
+    cancelAnimationFrame(fadeRaf);
+    const from = bgm.volume, t0 = performance.now();
+    const step = now => {
+      const k = Math.min(1, (now - t0) / ms);
+      bgm.volume = from + (target - from) * k;
+      if (k < 1) fadeRaf = requestAnimationFrame(step);
+      else if (done) done();
+    };
+    fadeRaf = requestAnimationFrame(step);
+  }
+
+  function playMusic() {
+    wantMusic = true;
+    setMusicUI(true);
+    bgm.volume = 0;
+    const p = bgm.play();
+    if (p) p.then(() => fadeTo(MUSIC_VOLUME, 1200)).catch(() => { wantMusic = false; setMusicUI(false); });
+  }
+  function stopMusic() {
+    wantMusic = false;
+    setMusicUI(false);
+    fadeTo(0, 500, () => bgm.pause());
+  }
+
+  musicBtn.addEventListener('click', () => (wantMusic ? stopMusic() : playMusic()));
+  // Tạm dừng khi khách chuyển tab/ứng dụng, quay lại thì phát tiếp
+  document.addEventListener('visibilitychange', () => {
+    if (!wantMusic) return;
+    if (document.hidden) bgm.pause();
+    else bgm.play().catch(() => {});
+  });
+  // Không phát được (mạng lỗi, trình duyệt không hỗ trợ) → ẩn nút
+  bgm.addEventListener('error', () => { musicBtn.hidden = true; setMusicUI(false); wantMusic = false; });
 })();
