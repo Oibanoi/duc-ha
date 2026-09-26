@@ -44,7 +44,6 @@ window.WEDDING = {
     {
       key: 'khu-vuon',
       title: 'Khu Vườn',
-      subtitle: 'Một buổi chiều giữa mái vòm và hàng cây',
       cover: 'images/IMG_6485',
       photos: [
         { id: 'images/IMG_6480', cap: 'Dạo bước trong vườn' },
@@ -65,7 +64,6 @@ window.WEDDING = {
     {
       key: 'studio',
       title: 'Studio',
-      subtitle: 'Váy cưới, tấm voan và những tiếng cười',
       cover: 'images/IMG_6513',
       photos: [
         { id: 'images/IMG_6503', cap: 'Váy cưới' },
@@ -83,7 +81,6 @@ window.WEDDING = {
     {
       key: 'ao-dai',
       title: 'Áo Dài',
-      subtitle: 'Song hỷ',
       cover: 'images/IMG_6516',
       photos: [
         { id: 'images/IMG_6516', cap: 'Áo dài' },

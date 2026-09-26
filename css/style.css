@@ -251,7 +251,7 @@ ol { padding: 0; list-style: none; }
 
 /* Chapter indicator */
 .chapters { display: none; }
-@media (min-width: 1600px) {
+@media (min-width: 1440px) {
   .chapters {
     display: grid; gap: var(--s-12);
     position: fixed; left: var(--s-24); bottom: var(--s-48); z-index: 30;
@@ -265,7 +265,8 @@ ol { padding: 0; list-style: none; }
   .chapters li span { opacity: 0; transform: translateX(-4px); transition: opacity var(--t-normal), transform var(--t-normal) var(--ease); }
   .chapters li.is-active { opacity: 1; color: var(--color-foreground); }
   .chapters li.is-active::before { width: 28px; }
-  .chapters li.is-active span { opacity: 1; transform: none; }
+  /* Chỉ hiện số trong lề trái; tên chương hiện khi rê chuột để không đè lên ảnh */
+  .chapters:hover li span { opacity: 1; transform: none; }
   .chapters.is-dark li.is-active { color: var(--color-dark-text); }
 }
 

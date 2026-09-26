@@ -163,7 +163,6 @@
         <span class="album-card__num">${pad(i + 1)}</span>
         <div>
           <span class="album-card__title">${g.title}</span>
-          <span class="album-card__sub">${g.subtitle} · ${g.photos.length} ảnh</span>
           <span class="album-card__cta">Xem album <span aria-hidden="true">→</span></span>
         </div>
       </div>`;
@@ -202,8 +201,7 @@
   let albumReturnFocus = null;
 
   function figHtml(p) {
-    const n = pad(p.gallery.photos.indexOf(p) + 1);
-    return `<figure class="av-fig"><div class="ph js-open" data-id="${p.id}" tabindex="0" role="button" aria-label="Mở ảnh: ${p.cap}"></div><figcaption><b>${n}</b>${p.cap}</figcaption></figure>`;
+    return `<figure class="av-fig"><div class="ph js-open" data-id="${p.id}" tabindex="0" role="button" aria-label="Mở ảnh: ${p.cap}"></div></figure>`;
   }
 
   function renderAlbum(g) {
@@ -213,7 +211,6 @@
       <header class="av-head">
         <p class="kicker">Album ${pad(gi + 1)}</p>
         <h2 class="av-head__title" id="albumTitle">${g.title}</h2>
-        <p class="av-head__sub">${g.subtitle}</p>
         <p class="av-head__count">${g.photos.length} ảnh · Hải Hưng, Ninh Bình</p>
       </header>`;
     let i = 0, k = 0;
@@ -308,7 +305,6 @@
   const lb = $('#lb');
   const lbSlide = $('#lbSlide');
   const lbCounter = $('#lbCounter');
-  const lbCap = $('#lbCap');
   const lbDots = $('#lbDots');
   const sheet = $('#sheet');
   const sheetGrid = $('#sheetGrid');
@@ -367,7 +363,6 @@
     }
 
     lbCounter.innerHTML = `${pad(current + 1)} <span>/ ${pad(ALL.length)}</span>`;
-    lbCap.textContent = `${p.gallery.title} · ${p.cap}`;
     renderDots();
     preload(current + 1);
     preload(current - 1);
