@@ -588,20 +588,29 @@
   /* The End → all photos */
   $('#allPhotosBtn').addEventListener('click', () => openLightbox(0, { sheet: true }));
   /* ---------------------------------------------------------
-     Nhạc nền: không tự phát — khách bấm nút nhạc để bật/tắt
+     Nhạc nền: tự phát khi mở trang. Nếu trình duyệt chặn (chưa có
+     tương tác), nhạc bắt đầu ở lần chạm/bấm phím đầu tiên.
+     Khách đã tắt nhạc → lần sau vào lại không tự phát nữa.
      --------------------------------------------------------- */
   const bgm = $('#bgm');
   const musicBtn = $('#musicBtn');
+  const musicLabel = $('#musicLabel');
   const MUSIC_VOLUME = 0.6;
-  let wantMusic = false;
+  const MUSIC_OFF_KEY = 'wedding-music-off';
+  const store = {
+    get() { try { return localStorage.getItem(MUSIC_OFF_KEY) === '1'; } catch (e) { return false; } },
+    set(off) { try { off ? localStorage.setItem(MUSIC_OFF_KEY, '1') : localStorage.removeItem(MUSIC_OFF_KEY); } catch (e) {} }
+  };
+  let wantMusic = !store.get();
+  let pausedByHide = false;
   let fadeRaf = 0;
 
-  function setMusicUI(on) {
-    musicBtn.classList.toggle('is-playing', on);
-    musicBtn.setAttribute('aria-pressed', String(on));
-    const label = on ? 'Tắt nhạc' : 'Bật nhạc';
-    musicBtn.setAttribute('aria-label', label);
-    musicBtn.title = label;
+  function renderMusic() {
+    const playing = !bgm.paused;
+    musicBtn.classList.toggle('is-playing', playing);
+    musicBtn.classList.toggle('is-waiting', wantMusic && !playing);
+    musicBtn.setAttribute('aria-pressed', String(playing));
+    musicLabel.textContent = playing ? 'Tắt nhạc' : 'Bật nhạc';
   }
 
   // Tăng/giảm âm lượng mượt (iOS bỏ qua volume — khi đó chỉ bật/tắt)
@@ -617,26 +626,44 @@
     fadeRaf = requestAnimationFrame(step);
   }
 
-  function playMusic() {
-    wantMusic = true;
-    setMusicUI(true);
+  function startMusic() {
     bgm.volume = 0;
-    const p = bgm.play();
-    if (p) p.then(() => fadeTo(MUSIC_VOLUME, 1200)).catch(() => { wantMusic = false; setMusicUI(false); });
-  }
-  function stopMusic() {
-    wantMusic = false;
-    setMusicUI(false);
-    fadeTo(0, 500, () => bgm.pause());
+    return Promise.resolve(bgm.play()).then(() => fadeTo(MUSIC_VOLUME, 1500));
   }
 
-  musicBtn.addEventListener('click', () => (wantMusic ? stopMusic() : playMusic()));
+  // Lần tương tác đầu tiên (không tính bấm vào chính nút nhạc) → phát nhạc
+  const GESTURES = ['pointerdown', 'touchend', 'keydown', 'click'];
+  function onFirstGesture(e) {
+    if (e.target.closest && e.target.closest('#musicBtn')) return;
+    if (!wantMusic || !bgm.paused) return disarm();
+    startMusic().then(disarm).catch(() => {});
+  }
+  const arm = () => GESTURES.forEach(t => document.addEventListener(t, onFirstGesture, { capture: true, passive: true }));
+  const disarm = () => GESTURES.forEach(t => document.removeEventListener(t, onFirstGesture, { capture: true }));
+
+  musicBtn.addEventListener('click', () => {
+    if (!bgm.paused) {
+      wantMusic = false;
+      store.set(true);
+      fadeTo(0, 500, () => bgm.pause());
+      musicLabel.textContent = 'Bật nhạc';
+    } else {
+      wantMusic = true;
+      store.set(false);
+      startMusic().catch(() => {});
+    }
+  });
+
+  bgm.addEventListener('play', renderMusic);
+  bgm.addEventListener('pause', renderMusic);
   // Tạm dừng khi khách chuyển tab/ứng dụng, quay lại thì phát tiếp
   document.addEventListener('visibilitychange', () => {
-    if (!wantMusic) return;
-    if (document.hidden) bgm.pause();
-    else bgm.play().catch(() => {});
+    if (document.hidden && !bgm.paused) { pausedByHide = true; bgm.pause(); }
+    else if (!document.hidden && pausedByHide) { pausedByHide = false; if (wantMusic) bgm.play().catch(() => {}); }
   });
   // Không phát được (mạng lỗi, trình duyệt không hỗ trợ) → ẩn nút
-  bgm.addEventListener('error', () => { musicBtn.hidden = true; setMusicUI(false); wantMusic = false; });
+  bgm.addEventListener('error', () => { musicBtn.hidden = true; wantMusic = false; disarm(); });
+
+  renderMusic();
+  if (wantMusic) startMusic().catch(arm);
 })();
