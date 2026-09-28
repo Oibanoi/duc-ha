@@ -512,6 +512,8 @@ ol { padding: 0; list-style: none; }
 .btn--light:hover { background: var(--color-dark-text); color: var(--color-dark); }
 .btn--ghost { border-color: var(--color-line-dark); color: var(--color-dark-text); }
 .btn--ghost:hover { background: transparent; border-color: var(--color-dark-text); color: var(--color-dark-text); }
+.btn--primary { background: var(--color-foreground); color: var(--color-background); }
+.btn--primary:hover { background: transparent; color: var(--color-foreground); }
 
 /* Details (progressive disclosure) */
 .details { padding: var(--section-y) 0; border-top: 1px solid var(--color-line); }
@@ -531,6 +533,10 @@ ol { padding: 0; list-style: none; }
 }
 .accordion details[open] summary::after { transform: rotate(45deg); }
 .accordion__body { padding: 0 0 var(--s-24); max-width: 36em; line-height: 1.7; }
+
+/* RSVP callout — nổi bật nút xác nhận tham dự */
+.rsvp-cta { margin-top: var(--s-24); }
+.rsvp-cta .btn { min-width: 240px; }
 
 /* The End */
 .end {
@@ -691,6 +697,7 @@ ol { padding: 0; list-style: none; }
   -webkit-user-drag: none;
 }
 .lb__slide img.is-loaded { opacity: 1; }
+.lb__slide img.is-zoomed { cursor: grab; }
 .lb__slide.enter { animation: lbEnter var(--t-slow) var(--ease) both; }
 
 .lb__nav {

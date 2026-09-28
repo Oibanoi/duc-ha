@@ -315,6 +315,39 @@
   let sheetBuilt = false;
   const preloaded = new Set();
 
+  // Pinch-to-zoom state for the current photo (reset on every show())
+  const ZOOM_MIN = 1, ZOOM_MAX = 4, ZOOM_TAP = 2.5;
+  let zoomScale = 1, zoomX = 0, zoomY = 0;
+  function applyZoom() {
+    lbImg.style.transform = zoomScale > 1 ? `translate(${zoomX}px, ${zoomY}px) scale(${zoomScale})` : '';
+    lbImg.classList.toggle('is-zoomed', zoomScale > 1.01);
+  }
+  function clampZoomPan() {
+    const r = stage.getBoundingClientRect();
+    const maxX = Math.max(0, (r.width * (zoomScale - 1)) / 2);
+    const maxY = Math.max(0, (r.height * (zoomScale - 1)) / 2);
+    zoomX = Math.min(maxX, Math.max(-maxX, zoomX));
+    zoomY = Math.min(maxY, Math.max(-maxY, zoomY));
+  }
+  function resetZoom() {
+    zoomScale = 1; zoomX = 0; zoomY = 0;
+    if (lbImg) { lbImg.style.transform = ''; lbImg.classList.remove('is-zoomed'); }
+  }
+  function toggleZoomAt(clientX, clientY) {
+    const r = stage.getBoundingClientRect();
+    if (zoomScale > 1.01) {
+      zoomScale = 1; zoomX = 0; zoomY = 0;
+    } else {
+      zoomScale = ZOOM_TAP;
+      zoomX = -(clientX - r.left - r.width / 2) * (zoomScale - 1);
+      zoomY = -(clientY - r.top - r.height / 2) * (zoomScale - 1);
+      clampZoomPan();
+    }
+    lbImg.style.transition = 'transform 300ms cubic-bezier(0.22, 0.61, 0.36, 1)';
+    applyZoom();
+    setTimeout(() => { lbImg.style.transition = ''; }, 320);
+  }
+
   const LB_SIZES = '100vw';
 
   function preload(i) {
@@ -342,6 +375,7 @@
 
   function show(i, dir = 0) {
     current = (i + ALL.length) % ALL.length;
+    resetZoom();
     const p = ALL[current];
 
     // Instant placeholder: the (usually cached) thumbnail / tiny blur behind the hi-res image
@@ -477,18 +511,64 @@
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   }
 
-  /* Swipe / tap on the stage */
+  /* Swipe / tap / pinch-zoom on the stage */
   const stage = $('#lbStage');
   let sx = 0, sy = 0, st = 0, dx = 0, dy = 0, dragging = false, axis = null;
+  const activePointers = new Map(); // pointerId -> {x,y}, drives pinch + zoomed panning
+  let pinchStartDist = 0, pinchStartScale = 1, pinchStartMid = { x: 0, y: 0 }, zoomPanStart = { x: 0, y: 0 };
+  let lastTapTime = 0, lastTapPos = { x: 0, y: 0 };
 
   stage.addEventListener('pointerdown', e => {
-    if (e.button !== 0) return;
-    dragging = true; axis = null;
-    sx = e.clientX; sy = e.clientY; st = performance.now(); dx = dy = 0;
-    stage.setPointerCapture(e.pointerId);
-    lbSlide.style.transition = 'none';
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    if (activePointers.size === 2) {
+      // Second finger down: (re)start a pinch from the current zoom state
+      dragging = false;
+      lbSlide.style.transition = 'none';
+      lbSlide.style.transform = '';
+      lb.style.backgroundColor = '';
+      const pts = [...activePointers.values()];
+      pinchStartDist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) || 1;
+      pinchStartScale = zoomScale;
+      pinchStartMid = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 };
+      zoomPanStart = { x: zoomX, y: zoomY };
+      axis = 'pinch';
+    } else if (zoomScale > 1.01) {
+      // Single finger while zoomed in: pan the photo instead of swiping
+      axis = 'pan-zoom';
+      sx = e.clientX; sy = e.clientY;
+      zoomPanStart = { x: zoomX, y: zoomY };
+    } else {
+      dragging = true; axis = null;
+      sx = e.clientX; sy = e.clientY; st = performance.now(); dx = dy = 0;
+      lbSlide.style.transition = 'none';
+    }
   });
+
   stage.addEventListener('pointermove', e => {
+    if (!activePointers.has(e.pointerId)) return;
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    if (axis === 'pinch' && activePointers.size === 2) {
+      const pts = [...activePointers.values()];
+      const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) || 1;
+      zoomScale = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, pinchStartScale * (dist / pinchStartDist)));
+      const mid = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 };
+      zoomX = zoomPanStart.x + (mid.x - pinchStartMid.x);
+      zoomY = zoomPanStart.y + (mid.y - pinchStartMid.y);
+      clampZoomPan();
+      applyZoom();
+      return;
+    }
+    if (axis === 'pan-zoom') {
+      zoomX = zoomPanStart.x + (e.clientX - sx);
+      zoomY = zoomPanStart.y + (e.clientY - sy);
+      clampZoomPan();
+      applyZoom();
+      return;
+    }
     if (!dragging) return;
     dx = e.clientX - sx; dy = e.clientY - sy;
     if (!axis && Math.hypot(dx, dy) > 8) axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
@@ -498,7 +578,39 @@
       lb.style.backgroundColor = `rgba(13, 12, 11, ${1 - Math.min(dy / 500, 0.5)})`;
     }
   });
+
   const endDrag = e => {
+    activePointers.delete(e.pointerId);
+
+    if (axis === 'pinch' || axis === 'pan-zoom') {
+      const wasTap = axis === 'pan-zoom' && Math.hypot(e.clientX - sx, e.clientY - sy) < 8;
+      if (activePointers.size === 1 && zoomScale > 1.01) {
+        // Lifted one of two pinching fingers: keep panning with the remaining one
+        const rest = [...activePointers.values()][0];
+        axis = 'pan-zoom';
+        sx = rest.x; sy = rest.y;
+        zoomPanStart = { x: zoomX, y: zoomY };
+        return;
+      }
+      axis = null; dragging = false;
+      // A tap while already zoomed in doesn't reach the un-zoomed tap branch below,
+      // so double-tap-to-zoom-out has to be detected here too.
+      if (wasTap && e.type === 'pointerup') {
+        const now = performance.now();
+        const isDoubleTap = now - lastTapTime < 300 && Math.hypot(e.clientX - lastTapPos.x, e.clientY - lastTapPos.y) < 30;
+        if (isDoubleTap) {
+          lastTapTime = 0;
+          toggleZoomAt(e.clientX, e.clientY);
+          return;
+        }
+        lastTapTime = now; lastTapPos = { x: e.clientX, y: e.clientY };
+        lb.classList.toggle('ui-hidden');
+        clearTimeout(idleTimer);
+      }
+      if (zoomScale <= 1.01) resetZoom();
+      return;
+    }
+
     if (!dragging) return;
     dragging = false;
     const dt = performance.now() - st;
@@ -513,12 +625,21 @@
     } else if (axis === 'y' && dy > 110) {
       popLayerUI();
     } else if (!axis && e.type === 'pointerup') {
-      // Tap: touch toggles controls; mouse click on image advances
       if (e.pointerType === 'mouse') {
+        // Mouse click on the image advances; no zoom affordance for pointer devices
         if (e.target === lbImg) go(1);
       } else {
-        lb.classList.toggle('ui-hidden');
-        clearTimeout(idleTimer);
+        const now = performance.now();
+        const isDoubleTap = now - lastTapTime < 300 && Math.hypot(e.clientX - lastTapPos.x, e.clientY - lastTapPos.y) < 30;
+        if (isDoubleTap) {
+          lastTapTime = 0;
+          toggleZoomAt(e.clientX, e.clientY);
+        } else {
+          lastTapTime = now;
+          lastTapPos = { x: e.clientX, y: e.clientY };
+          lb.classList.toggle('ui-hidden');
+          clearTimeout(idleTimer);
+        }
       }
     }
     setTimeout(() => { lbSlide.style.transition = ''; }, 360);

@@ -53,13 +53,18 @@ window.WEDDING = {
         { id: 'images/IMG_6476', cap: 'Tay trong tay' },
         { id: 'images/IMG_6475', cap: 'Giữa khu vườn' },
         { id: 'images/IMG_6456', cap: 'Ánh nhìn' },
+        { id: 'images/IMG_6455', cap: 'Trên thảm cỏ xanh' },
         { id: 'images/IMG_6481', cap: 'Nhẫn cưới' },
         { id: 'images/IMG_6478', cap: 'Xin chào' },
         { id: 'images/IMG_6477', cap: 'Thì thầm' },
         { id: 'images/IMG_6497', cap: 'Dưới tấm voan' },
         { id: 'images/IMG_6499', cap: 'Lối nhỏ' },
         { id: 'images/IMG_6500', cap: 'Hàng cây xanh' },
-        { id: 'images/IMG_6501', cap: 'Bên nhau' }
+        { id: 'images/IMG_6501', cap: 'Bên nhau' },
+        { id: 'images/PQD09358', cap: 'Sánh bước bên nhau' },
+        { id: 'images/PQD09427', cap: 'Nắm tay dạo phố' },
+        { id: 'images/PQD09554', cap: 'Bên nhà vòm cổ' },
+        { id: 'images/PQD09562', cap: 'Trò chuyện dưới mái vòm' }
       ]
     },
     {
@@ -76,7 +81,16 @@ window.WEDDING = {
         { id: 'images/IMG_6510', cap: 'Nụ cười' },
         { id: 'images/IMG_6512', cap: 'Tinh nghịch' },
         { id: 'images/IMG_6518', cap: 'Giữa hoa' },
-        { id: 'images/IMG_6519', cap: 'Khoảnh khắc vui' }
+        { id: 'images/IMG_6519', cap: 'Khoảnh khắc vui' },
+        { id: 'images/IMG_6369', cap: 'Khoảnh khắc âu yếm' },
+        { id: 'images/PQD00018', cap: 'Đầm xoè kiêu sa' },
+        { id: 'images/PQD00169', cap: 'Dáng nghiêng diệu kỳ' },
+        { id: 'images/PQD00263', cap: 'Tựa vào vai anh' },
+        { id: 'images/PQD00278', cap: 'Bên đoá phong lan' },
+        { id: 'images/PQD00284', cap: 'Giữa vườn hoa nhỏ' },
+        { id: 'images/PQD00362', cap: 'Sánh đôi' },
+        { id: 'images/PQD00384', cap: 'Phong thái lịch lãm' },
+        { id: 'images/PQD00387', cap: 'Trầm tư' }
       ]
     },
     {
@@ -85,7 +99,10 @@ window.WEDDING = {
       cover: 'images/IMG_6516',
       photos: [
         { id: 'images/IMG_6516', cap: 'Áo dài' },
-        { id: 'images/IMG_6517', cap: 'Song hỷ' }
+        { id: 'images/IMG_6517', cap: 'Song hỷ' },
+        { id: 'images/PQD00427', cap: 'Áo dài đôi ta' },
+        { id: 'images/PQD00462', cap: 'Nhà có hỷ' },
+        { id: 'images/PQD00471', cap: 'Trước cửa hỷ' }
       ]
     }
   ]
