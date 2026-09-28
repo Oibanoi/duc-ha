@@ -683,29 +683,6 @@
   }
   tick();
 
-  $('#icsBtn').addEventListener('click', () => {
-    const lines = [
-      'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//DH Wedding//VI', 'CALSCALE:GREGORIAN',
-      'BEGIN:VEVENT',
-      'UID:dh-wedding-20261018@local',
-      'DTSTAMP:20260101T000000Z',
-      'DTSTART:20261018T030000Z',
-      'DTEND:20261018T090000Z',
-      'SUMMARY:Đám cưới Xuân Dục & Thu Hà',
-      'LOCATION:Xã Hải Hưng\\, Tỉnh Ninh Bình',
-      'DESCRIPTION:10:00 Tiệc mời cỗ · 13:10 Lễ Thành Hôn (nhà trai) · 13:15 Lễ Vu Quy (nhà gái)',
-      'END:VEVENT', 'END:VCALENDAR'
-    ];
-    const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'dam-cuoi-xuan-duc-thu-ha.ics';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  });
-
   /* The End → all photos */
   $('#allPhotosBtn').addEventListener('click', () => openLightbox(0, { sheet: true }));
   /* ---------------------------------------------------------
