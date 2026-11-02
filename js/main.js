@@ -163,28 +163,30 @@
   const hFigs = ALL.map((p, i) => {
     const fig = document.createElement('figure');
     fig.className = 'hs-item' + (p.land ? ' hs-item--land' : '');
-    fig.innerHTML = `<div class="ph js-open" data-photo="${p.id}" tabindex="0" role="button" aria-label="Mở ảnh: ${p.cap}"></div>
-      <figcaption><span>${pad(i + 1)}</span>${p.cap}</figcaption>`;
+    fig.innerHTML = `<div class="ph js-open" data-photo="${p.id}" tabindex="0" role="button" aria-label="Mở ảnh ${i + 1}: ${p.cap}"></div>`;
     fillFigure($('.ph', fig), p.id, p.land ? '(min-width: 900px) 110vh, 92vw' : '(min-width: 900px) 56vh, 82vw', p.alt);
     hTrack.appendChild(fig);
     return fig;
   });
   const setCount = i => { hCount.innerHTML = `${pad(i + 1)} <span>/ ${pad(hFigs.length)}</span>`; };
   setCount(0);
-  // Hiệu ứng theo vị trí: ảnh gần giữa màn hình to & rõ nhất, ảnh trong khung trôi chậm (parallax)
+  // Parallax: ảnh bên trong khung trôi chậm hơn khung.
+  // Vị trí từng ảnh được đo sẵn (hMeasure) → mỗi khung hình chỉ GHI style, không đọc layout → không giật.
   const hImgs = hFigs.map(f => $('img', f));
-  function hFx(progress) {
-    hBar.style.transform = `scaleX(${progress})`;
-    const mid = innerWidth / 2;
+  let hCenters = [], hOffset = 0, hLastBest = -1;
+  function hMeasure() {
+    hCenters = hFigs.map(f => f.offsetLeft + f.offsetWidth / 2);
+  }
+  function hFx(progress, offset) {
+    hBar.style.transform = `scaleX(${progress.toFixed(4)})`;
+    const vw = innerWidth, mid = vw / 2;
     let best = 0, bestD = Infinity;
-    hFigs.forEach((f, i) => {
-      const r = f.getBoundingClientRect();
-      const d = (r.left + r.width / 2 - mid) / innerWidth;
-      f.style.setProperty('--k', (1 - Math.min(1, Math.abs(d))).toFixed(3));
-      if (!reduceMotion) hImgs[i].style.transform = `translate3d(${(-d * 8).toFixed(2)}%, 0, 0) scale(1.18)`;
+    for (let i = 0; i < hFigs.length; i++) {
+      const d = (hCenters[i] - offset - mid) / vw; // vị trí so với giữa màn hình (-1..1)
       if (Math.abs(d) < bestD) { bestD = Math.abs(d); best = i; }
-    });
-    setCount(best);
+      if (!reduceMotion && Math.abs(d) < 1.5) hImgs[i].style.transform = `translate3d(${(-d * 6).toFixed(2)}%, 0, 0) scale(1.14)`;
+    }
+    if (best !== hLastBest) { hLastBest = best; setCount(best); }
   }
   const swipeProgress = () => {
     const max = hTrack.scrollWidth - hTrack.clientWidth;
@@ -208,31 +210,35 @@
     const pin = !!motion && pinMQ.matches && !reduceMotion;
     hWrap.classList.toggle('is-pinned', pin);
     hWrap.classList.toggle('is-swipe', !pin);
+    hMeasure();
 
     if (pin) {
       let dist = 0;
       measure = () => {
         dist = Math.max(0, hTrack.scrollWidth - innerWidth);
         hWrap.style.height = `${dist + innerHeight}px`; // quãng trượt ngang + 1 màn hình
+        hMeasure();
       };
       measure();
       addEventListener('resize', measure);
       stopFx = motion.scroll(progress => {
-        hTrack.style.transform = `translate3d(${-progress * dist}px, 0, 0)`;
+        const x = Math.round(progress * dist);
+        hTrack.style.transform = `translate3d(${-x}px, 0, 0)`;
         chapterList.classList.toggle('is-muted', progress > 0 && progress < 1);
-        hFx(progress);
+        hFx(progress, x);
       }, { target: hWrap, offset: ['start start', 'end end'] });
     } else if (motion) {
-      stopFx = motion.scroll(progress => hFx(progress), { container: hTrack, axis: 'x' });
+      stopFx = motion.scroll(progress => hFx(progress, hTrack.scrollLeft), { container: hTrack, axis: 'x' });
     } else {
-      const f = () => hFx(swipeProgress());
+      const f = () => hFx(swipeProgress(), hTrack.scrollLeft);
       hTrack.addEventListener('scroll', f, { passive: true });
       f();
       stopFx = () => hTrack.removeEventListener('scroll', f);
     }
   }
   setupGallery();
-  hFigs.forEach((f, i) => hImgs[i].addEventListener('load', () => { if (measure) measure(); }, { once: true }));
+  hFigs.forEach((f, i) => hImgs[i].addEventListener('load', () => { measure ? measure() : hMeasure(); }, { once: true }));
+  addEventListener('resize', () => { if (!measure) hMeasure(); });
   pinMQ.addEventListener('change', setupGallery);
 
   import(MOTION_URL).then(m => {
