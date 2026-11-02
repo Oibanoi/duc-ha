@@ -736,23 +736,25 @@
      Wedding info: families, countdown, calendar
      --------------------------------------------------------- */
   const mapUrl = addr => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`;
-  $('#families').innerHTML = W.families.map(f => `
-    <article class="family reveal">
-      <h3 class="family__side">${f.side}</h3>
-      <dl class="family__parents">
-        <dt>Ông</dt><dd>${f.father}</dd>
-        <dt>Bà</dt><dd>${f.mother}</dd>
-      </dl>
-      <p class="family__child"><small>${f.child.role}</small>${f.child.name}</p>
-      <div class="family__events">
-        ${f.events.map(ev => `
-          <div class="event">
-            <div class="event__head"><span class="event__time">${ev.time}</span><span class="event__title">${ev.title}</span></div>
-            <p class="event__addr">${ev.place} — ${ev.address}</p>
-            <a class="link link--map" href="${ev.map || mapUrl(ev.address)}" target="_blank" rel="noopener">Mở bản đồ <span aria-hidden="true">↗</span></a>
-          </div>`).join('')}
+  const HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>';
+  const PIN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg>';
+  const house = (f, mod) => `
+    <article class="house house--${mod} reveal">
+      <h3 class="house__side">${f.side}</h3>
+      <p class="house__parents"><span>Ông</span> ${f.father}<br><span>Bà</span> ${f.mother}</p>
+      <p class="house__child"><span class="house__role">${f.child.role}</span><span class="house__name">${f.child.name}</span></p>
+      <div class="house__place">
+        <p class="house__addr">Tư gia ${f.side.toLowerCase()}<br>${f.address}</p>
+        <ul class="house__events">
+          ${f.events.map(ev => `<li><time>${ev.time}</time><span>${ev.title}<small>${ev.date}</small></span></li>`).join('')}
+        </ul>
+        <a class="house__map" href="${f.map || mapUrl(f.address)}" target="_blank" rel="noopener">${PIN}Chỉ đường đến ${f.side.toLowerCase()}</a>
       </div>
-    </article>`).join('');
+    </article>`;
+  $('#families').innerHTML =
+    house(W.families[0], 'groom') +
+    `<div class="houses__mid" aria-hidden="true"><i></i>${HEART}<i></i></div>` +
+    house(W.families[1], 'bride');
   observeReveal($('#families'));
 
   const target = new Date(W.date);

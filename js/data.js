@@ -17,25 +17,28 @@ window.WEDDING = {
   dateLong: 'Thứ Bảy, ngày 14 tháng 11 năm 2026',
   lunar: 'Tức ngày 06 tháng 10 năm Bính Ngọ',
 
-  // `map`: link Google Maps chỉ đường; không có thì tìm theo `address`
+  // Mỗi nhà: địa chỉ + các lễ tổ chức tại nhà đó.
+  // `map`: link Google Maps chỉ đường (nếu có); không có thì tìm theo `address`
   families: [
     {
-      side: 'Nhà Trai',
+      side: 'Nhà trai',
       father: 'Trần Phi Hùng',
       mother: 'Nguyễn Thị Thủy',
       child: { role: 'Chú rể', name: 'Trần Văn Doanh' },
+      address: 'Xóm 1, Hải Sơn (cũ)',
       events: [
-        { time: '15:30', title: 'Lễ Thành Hôn · 14/11', place: 'Tư gia nhà trai', address: 'Xóm 1, Hải Sơn (cũ)' }
+        { time: '15:30', title: 'Lễ thành hôn', date: 'Thứ Bảy, 14/11' }
       ]
     },
     {
-      side: 'Nhà Gái',
+      side: 'Nhà gái',
       father: 'Nguyễn Văn Toàn',
       mother: 'Trần Thị Nguyệt',
       child: { role: 'Cô dâu', name: 'Nguyễn Thị Luyến' },
+      address: 'Xóm 8, Hải Tây (cũ)',
       events: [
-        { time: '14:30', title: 'Lễ Dạm Ngõ · 13/11', place: 'Tư gia nhà gái', address: 'Xóm 8, Hải Tây (cũ)' },
-        { time: '14:30', title: 'Lễ Xin Dâu · 14/11', place: 'Tư gia nhà gái', address: 'Xóm 8, Hải Tây (cũ)' }
+        { time: '14:30', title: 'Lễ dạm ngõ', date: 'Thứ Sáu, 13/11' },
+        { time: '14:30', title: 'Lễ xin dâu', date: 'Thứ Bảy, 14/11' }
       ]
     }
   ],
