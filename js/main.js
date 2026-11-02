@@ -150,27 +150,106 @@
   }
 
   /* ---------------------------------------------------------
-     Album discovery cards (Level 1)
+     Album: cuộn ngang ghim bằng Motion (motion.dev)
+     Cuộn dọc trong khu Album → hàng ảnh lớn trượt ngang.
+     Nếu không tải được Motion / người dùng giảm chuyển động:
+     giữ hàng ảnh vuốt ngang thông thường (CSS scroll-snap).
      --------------------------------------------------------- */
-  const albums = $('#albums');
-  W.galleries.forEach((g, i) => {
-    const card = document.createElement('button');
-    card.type = 'button';
-    card.className = 'album-card reveal';
-    card.innerHTML = `
-      <figure class="ph"></figure>
-      <div class="album-card__meta">
-        <span class="album-card__num">${pad(i + 1)}</span>
-        <div>
-          <span class="album-card__title">${g.title}</span>
-          <span class="album-card__cta">Xem album <span aria-hidden="true">→</span></span>
-        </div>
-      </div>`;
-    fillFigure($('figure', card), g.cover, '(min-width: 1100px) 50vw, 100vw', `Ảnh bìa album ${g.title}`);
-    card.addEventListener('click', () => openAlbum(g.key));
-    albums.appendChild(card);
+  const MOTION_URL = 'https://cdn.jsdelivr.net/npm/motion@11.11.17/+esm';
+  const hWrap = $('#hscroll');
+  const hTrack = $('#hTrack');
+  const hCount = $('#hCount');
+  const hBar = $('#hBar');
+  const hFigs = ALL.map((p, i) => {
+    const fig = document.createElement('figure');
+    fig.className = 'hs-item' + (p.land ? ' hs-item--land' : '');
+    fig.innerHTML = `<div class="ph js-open" data-photo="${p.id}" tabindex="0" role="button" aria-label="Mở ảnh: ${p.cap}"></div>
+      <figcaption><span>${pad(i + 1)}</span>${p.cap}</figcaption>`;
+    fillFigure($('.ph', fig), p.id, p.land ? '(min-width: 900px) 110vh, 92vw' : '(min-width: 900px) 56vh, 82vw', p.alt);
+    hTrack.appendChild(fig);
+    return fig;
   });
-  observeReveal(albums);
+  const setCount = i => { hCount.innerHTML = `${pad(i + 1)} <span>/ ${pad(hFigs.length)}</span>`; };
+  setCount(0);
+  // Hiệu ứng theo vị trí: ảnh gần giữa màn hình to & rõ nhất, ảnh trong khung trôi chậm (parallax)
+  const hImgs = hFigs.map(f => $('img', f));
+  function hFx(progress) {
+    hBar.style.transform = `scaleX(${progress})`;
+    const mid = innerWidth / 2;
+    let best = 0, bestD = Infinity;
+    hFigs.forEach((f, i) => {
+      const r = f.getBoundingClientRect();
+      const d = (r.left + r.width / 2 - mid) / innerWidth;
+      f.style.setProperty('--k', (1 - Math.min(1, Math.abs(d))).toFixed(3));
+      if (!reduceMotion) hImgs[i].style.transform = `translate3d(${(-d * 8).toFixed(2)}%, 0, 0) scale(1.18)`;
+      if (Math.abs(d) < bestD) { bestD = Math.abs(d); best = i; }
+    });
+    setCount(best);
+  }
+  const swipeProgress = () => {
+    const max = hTrack.scrollWidth - hTrack.clientWidth;
+    return max > 0 ? hTrack.scrollLeft / max : 0;
+  };
+
+  // Gợi ý vuốt (điện thoại): ẩn sau lần vuốt đầu tiên
+  const hHint = $('#hHint');
+  hTrack.addEventListener('scroll', () => { if (hTrack.scrollLeft > 20) hHint.classList.add('is-gone'); }, { passive: true });
+
+  // Điện thoại / màn nhỏ: vuốt ngang tự nhiên (scroll-snap). Máy tính: ghim + cuộn dọc → trượt ngang.
+  const pinMQ = matchMedia('(min-width: 900px) and (hover: hover)');
+  let motion = null, stopFx = null, measure = null;
+
+  function setupGallery() {
+    if (stopFx) { stopFx(); stopFx = null; }
+    if (measure) { removeEventListener('resize', measure); measure = null; }
+    hWrap.style.height = '';
+    hTrack.style.transform = '';
+    chapterList.classList.remove('is-muted');
+    const pin = !!motion && pinMQ.matches && !reduceMotion;
+    hWrap.classList.toggle('is-pinned', pin);
+    hWrap.classList.toggle('is-swipe', !pin);
+
+    if (pin) {
+      let dist = 0;
+      measure = () => {
+        dist = Math.max(0, hTrack.scrollWidth - innerWidth);
+        hWrap.style.height = `${dist + innerHeight}px`; // quãng trượt ngang + 1 màn hình
+      };
+      measure();
+      addEventListener('resize', measure);
+      stopFx = motion.scroll(progress => {
+        hTrack.style.transform = `translate3d(${-progress * dist}px, 0, 0)`;
+        chapterList.classList.toggle('is-muted', progress > 0 && progress < 1);
+        hFx(progress);
+      }, { target: hWrap, offset: ['start start', 'end end'] });
+    } else if (motion) {
+      stopFx = motion.scroll(progress => hFx(progress), { container: hTrack, axis: 'x' });
+    } else {
+      const f = () => hFx(swipeProgress());
+      hTrack.addEventListener('scroll', f, { passive: true });
+      f();
+      stopFx = () => hTrack.removeEventListener('scroll', f);
+    }
+  }
+  setupGallery();
+  hFigs.forEach((f, i) => hImgs[i].addEventListener('load', () => { if (measure) measure(); }, { once: true }));
+  pinMQ.addEventListener('change', setupGallery);
+
+  import(MOTION_URL).then(m => {
+    motion = m;
+    setupGallery();
+    if (reduceMotion) return;
+    // Hiện dần lần lượt khi khu Album xuất hiện
+    hFigs.forEach(f => { f.style.opacity = '0'; });
+    const io = new IntersectionObserver(es => {
+      if (!es.some(e => e.isIntersecting)) return;
+      io.disconnect();
+      m.animate(hFigs, { opacity: [0, 1], y: [48, 0] }, { duration: 0.8, delay: m.stagger(0.07), ease: [0.22, 0.61, 0.36, 1] });
+    }, { threshold: 0.3 });
+    io.observe($('.hscroll__sticky', hWrap));
+  }).catch(() => { /* không tải được Motion: giữ bản vuốt ngang */ });
+
+  $('#stackAll').addEventListener('click', () => openLightbox(0, { sheet: true }));
 
   /* ---------------------------------------------------------
      History: back button closes overlays (important on mobile)
@@ -211,7 +290,7 @@
       <header class="av-head">
         <p class="kicker">Album ${pad(gi + 1)}</p>
         <h2 class="av-head__title" id="albumTitle">${g.title}</h2>
-        <p class="av-head__count">${g.photos.length} ảnh · Hải Hưng, Ninh Bình</p>
+        <p class="av-head__count">${g.photos.length} ảnh · Doanh &amp; Luyến</p>
       </header>`;
     let i = 0, k = 0;
     const photos = g.photos;
