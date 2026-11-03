@@ -1160,7 +1160,7 @@
       <p class="house__parents"><span>Ông</span> ${f.father}<br><span>Bà</span> ${f.mother}</p>
       <p class="house__child"><span class="house__role">${f.child.role}</span><span class="house__name">${f.child.name}</span></p>
       <div class="house__place">
-        <p class="house__addr">Tư gia ${f.side.toLowerCase()}<br>${f.address}</p>
+        <p class="house__addr"><span>Tư gia:</span> ${f.address}</p>
         <ul class="house__events">
           ${f.events.map((ev) => `<li><time>${ev.time}</time><span>${ev.title}<small>${ev.date}</small></span></li>`).join("")}
         </ul>

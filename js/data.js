@@ -27,7 +27,7 @@ window.WEDDING = {
       child: { role: 'Chú rể', name: 'Trần Văn Doanh' },
       address: 'Xóm 1, Hải Sơn (cũ)',
       events: [
-        { time: '15:30', title: 'Lễ thành hôn', date: 'Thứ Bảy, 14/11' }
+        { time: '15:30', title: 'Lễ thành hôn', date: 'thứ Bảy 14/11' }
       ]
     },
     {
@@ -37,8 +37,8 @@ window.WEDDING = {
       child: { role: 'Cô dâu', name: 'Nguyễn Thị Luyến' },
       address: 'Xóm 8, Hải Tây (cũ)',
       events: [
-        { time: '14:30', title: 'Lễ dạm ngõ', date: 'Thứ Sáu, 13/11' },
-        { time: '14:30', title: 'Lễ xin dâu', date: 'Thứ Bảy, 14/11' }
+        { time: '14:30', title: 'Lễ dạm ngõ', date: 'thứ Sáu 13/11' },
+        { time: '14:30', title: 'Lễ xin dâu', date: 'thứ Bảy 14/11' }
       ]
     }
   ],

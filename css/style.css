@@ -644,11 +644,13 @@ ol { padding: 0; list-style: none; }
   border-top: 1px solid var(--color-line);
 }
 .house__addr { font-size: var(--fs-body); line-height: 1.5; }
+.house__addr span { color: var(--color-muted); }
 .house__events { display: grid; gap: var(--s-12); margin: 0; padding: 0; list-style: none; }
 .house__events li { display: flex; gap: var(--s-12); align-items: baseline; justify-content: inherit; }
 .house__events time { font-size: 20px; color: var(--color-foreground); }
-.house__events span { display: grid; text-align: left; font-size: var(--fs-small); line-height: 1.35; }
+.house__events span { font-size: var(--fs-small); line-height: 1.35; white-space: nowrap; }
 .house__events small { font-size: 14px; color: var(--color-muted); }
+.house__events small::before { content: ', '; }
 .houses__mid svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.4; flex: none; }
 /* Đường giữa + trái tim (giống banner) */
 .houses__mid { display: flex; align-items: center; gap: var(--s-12); width: min(240px, 60%); margin: var(--s-64) 0; color: var(--color-accent); }
