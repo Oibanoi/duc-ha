@@ -150,26 +150,121 @@
   }
 
   /* ---------------------------------------------------------
-     Album: lưới ảnh justified + PhotoSwipe (photoswipe.com, MIT)
-     Mỗi ô có chiều rộng tỉ lệ với ảnh → các hàng cao bằng nhau, ảnh hiện trọn.
-     Bấm ảnh: PhotoSwipe phóng ra từ đúng ô đó (vuốt, chụm để zoom, vuốt xuống để đóng).
-     Không tải được PhotoSwipe → dùng trình xem ảnh sẵn có của trang.
+     Album: 4 kiểu hiển thị + PhotoSwipe (photoswipe.com, MIT)
+       justified — các hàng cao bằng nhau, ảnh hiện trọn
+       magazine  — lưới so le, ảnh `feat` to gấp đôi
+       chapters  — chia theo bối cảnh, mỗi chương mở bằng 1 ảnh lớn
+       slideshow — 1 ảnh lớn + dải ảnh nhỏ để chọn
+     Mở trang với ?chon → hiện bảng chọn kiểu (khách không thấy).
+     Bấm ảnh: PhotoSwipe phóng ra từ đúng ô đó; không tải được → trình xem ảnh sẵn có.
      --------------------------------------------------------- */
   const PSWP = 'https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/';
+  const LAYOUTS = { justified: 'Lưới đều', magazine: 'Tạp chí', chapters: 'Theo chương', slideshow: 'Trình chiếu' };
+  const LAYOUT_KEY = 'album-layout-preview';
   const grid = $('#albumGrid');
-  grid.innerHTML = ALL.map((p, i) => {
-    const r = (p.w / p.h).toFixed(4);
-    return `<a class="jgrid__item" href="${p.id}-3200.webp" style="--r:${r}"
-      data-pswp-width="${p.w}" data-pswp-height="${p.h}"
-      data-pswp-srcset="${p.id}-800.webp 800w, ${p.id}-1600.webp 1600w, ${p.id}-3200.webp ${p.w}w"
-      data-i="${i}" aria-label="Xem ảnh ${i + 1} / ${ALL.length}"></a>`;
-  }).join('');
-  $$('.jgrid__item', grid).forEach(a => {
-    const p = ALL[+a.dataset.i];
-    const img = makeImg(p.id, `(min-width: 900px) ${Math.round(p.w / p.h * 300)}px, ${Math.round(p.w / p.h * 160)}px`, `Ảnh cưới ${+a.dataset.i + 1}`);
-    img.width = p.w; img.height = p.h;
-    a.appendChild(img);
+  const isPicker = /[?&]chon\b/.test(location.search);
+  let layout = W.albumLayout in LAYOUTS ? W.albumLayout : 'justified';
+  if (isPicker) { try { const v = localStorage.getItem(LAYOUT_KEY); if (v in LAYOUTS) layout = v; } catch (e) {} }
+
+  const ratio = p => p.w / p.h;
+  const cell = (p, cls = '', sizes = '') => {
+    const i = ALL.indexOf(p);
+    return `<a class="${cls}" href="${p.id}-3200.webp" style="--r:${ratio(p).toFixed(4)}" data-i="${i}"
+      data-sizes="${sizes}" aria-label="Xem ảnh ${i + 1} / ${ALL.length}"></a>`;
+  };
+  const RENDER = {
+    justified: () => `<div class="jgrid">${ALL.map(p => cell(p, 'jgrid__item', `(min-width: 1100px) ${Math.round(ratio(p) * 240)}px, ${Math.round(ratio(p) * 120)}px`)).join('')}</div>`,
+    magazine: () => `<div class="mgrid">${ALL.map(p => cell(p, `mgrid__item${p.feat ? ' is-feat' : ''}${ratio(p) < 1 ? ' is-tall' : ''}`, p.feat ? '(min-width: 900px) 66vw, 100vw' : '(min-width: 900px) 33vw, 50vw')).join('')}</div>`,
+    chapters: () => W.albumChapters.map((c, k) => {
+      const ps = ALL.filter(p => p.g === c.key);
+      const lead = ps.find(p => p.feat) || ps[0];
+      const rest = ps.filter(p => p !== lead);
+      return `<section class="chap">
+        <header class="chap__head"><h3 class="chap__title">${c.title}</h3><p class="chap__count">${ps.length} ảnh</p></header>
+        ${cell(lead, 'chap__lead', '(min-width: 1100px) 1100px, 100vw')}
+        <div class="jgrid">${rest.map(p => cell(p, 'jgrid__item', `(min-width: 1100px) ${Math.round(ratio(p) * 240)}px, ${Math.round(ratio(p) * 120)}px`)).join('')}</div>
+      </section>`;
+    }).join(''),
+    slideshow: () => `<div class="sshow">
+        <div class="sshow__stage">
+          <button class="sshow__nav sshow__nav--prev" type="button" aria-label="Ảnh trước"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <div class="sshow__main" id="sshowMain"></div>
+          <button class="sshow__nav sshow__nav--next" type="button" aria-label="Ảnh sau"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+        <p class="sshow__count" id="sshowCount" aria-live="polite"></p>
+        <div class="sshow__thumbs" id="sshowThumbs">${ALL.map((p, i) => `<button type="button" class="sshow__thumb" data-t="${i}" aria-label="Ảnh ${i + 1}"></button>`).join('')}</div>
+      </div>`
+  };
+
+  function hydrate() {
+    $$('a[data-i]', grid).forEach(a => {
+      const p = ALL[+a.dataset.i];
+      const img = makeImg(p.id, a.dataset.sizes || '50vw', `Ảnh cưới ${+a.dataset.i + 1}`);
+      img.width = p.w; img.height = p.h;
+      a.appendChild(img);
+    });
+  }
+  let ssIndex = 0;
+  function slideTo(i) {
+    ssIndex = (i + ALL.length) % ALL.length;
+    const p = ALL[ssIndex];
+    const main = $('#sshowMain');
+    main.innerHTML = cell(p, 'sshow__img', '(min-width: 900px) 1100px, 100vw');
+    hydrate();
+    $('#sshowCount').innerHTML = `${pad(ssIndex + 1)} <span>/ ${pad(ALL.length)}</span>`;
+    $$('.sshow__thumb', grid).forEach((t, k) => t.classList.toggle('is-on', k === ssIndex));
+    const on = $(`.sshow__thumb[data-t="${ssIndex}"]`, grid);
+    const strip = $('#sshowThumbs');
+    if (on && strip) strip.scrollTo({ left: on.offsetLeft - strip.clientWidth / 2 + on.offsetWidth / 2, behavior: reduceMotion ? 'auto' : 'smooth' });
+  }
+  function renderGallery() {
+    grid.className = `album album--${layout}`;
+    grid.innerHTML = RENDER[layout]();
+    hydrate();
+    if (layout === 'slideshow') {
+      $$('.sshow__thumb', grid).forEach(t => {
+        const p = ALL[+t.dataset.t];
+        t.appendChild(makeImg(p.id, '120px', ''));
+      });
+      slideTo(ssIndex);
+    }
+  }
+  renderGallery();
+
+  grid.addEventListener('click', e => {
+    const t = e.target.closest('.sshow__thumb');
+    if (t) return slideTo(+t.dataset.t);
+    if (e.target.closest('.sshow__nav--prev')) return slideTo(ssIndex - 1);
+    if (e.target.closest('.sshow__nav--next')) return slideTo(ssIndex + 1);
+    const a = e.target.closest('a[data-i]');
+    if (!a || e.metaKey || e.ctrlKey) return;
+    e.preventDefault();
+    openAlbumAt(+a.dataset.i);
   });
+  grid.addEventListener('keydown', e => {
+    if (layout !== 'slideshow') return;
+    if (e.key === 'ArrowLeft') { e.preventDefault(); slideTo(ssIndex - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); slideTo(ssIndex + 1); }
+  });
+
+  // Bảng chọn kiểu (chỉ khi mở ?chon)
+  if (isPicker) {
+    const bar = document.createElement('div');
+    bar.className = 'layout-pick';
+    bar.setAttribute('role', 'group');
+    bar.setAttribute('aria-label', 'Chọn kiểu hiển thị album');
+    bar.innerHTML = `<span class="layout-pick__label">Kiểu album</span>` +
+      Object.entries(LAYOUTS).map(([k, v]) => `<button type="button" data-l="${k}" aria-pressed="${k === layout}">${v}</button>`).join('');
+    grid.before(bar);
+    bar.addEventListener('click', e => {
+      const b = e.target.closest('button[data-l]');
+      if (!b) return;
+      layout = b.dataset.l;
+      try { localStorage.setItem(LAYOUT_KEY, layout); } catch (err) {}
+      $$('button', bar).forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      renderGallery();
+    });
+  }
 
   let pswpReady = null;
   function loadPswp() {
@@ -182,14 +277,16 @@
     return pswpReady;
   }
   function openAlbumAt(index) {
-    const items = $$('.jgrid__item', grid);
+    const elFor = i => $(`a[data-i="${i}"]`, grid) || $(`.sshow__thumb[data-t="${i}"]`, grid);
     loadPswp().then(PhotoSwipe => {
       const pswp = new PhotoSwipe({
-        dataSource: items.map(a => ({
-          src: a.getAttribute('href'), srcset: a.dataset.pswpSrcset,
-          width: +a.dataset.pswpWidth, height: +a.dataset.pswpHeight,
-          msrc: $('img', a).currentSrc, element: a, alt: $('img', a).alt
-        })),
+        dataSource: ALL.map((p, i) => {
+          const el = elFor(i), img = el && $('img', el);
+          return {
+            src: `${p.id}-3200.webp`, srcset: `${p.id}-800.webp 800w, ${p.id}-1600.webp 1600w, ${p.id}-3200.webp ${p.w}w`,
+            width: p.w, height: p.h, msrc: img ? img.currentSrc : undefined, element: el, alt: `Ảnh cưới ${i + 1}`
+          };
+        }),
         index,
         bgOpacity: 0.96,
         showHideAnimationType: reduceMotion ? 'none' : 'zoom',
@@ -198,15 +295,10 @@
         errorMsg: 'Không tải được ảnh này.'
       });
       pswp.addFilter('thumbEl', (el, data) => data.element || el);
+      if (layout === 'slideshow') pswp.on('change', () => slideTo(pswp.currIndex));
       pswp.init();
-    }).catch(() => openLightbox(index, { from: items[index] }));
+    }).catch(() => openLightbox(index, { from: elFor(index) }));
   }
-  grid.addEventListener('click', e => {
-    const a = e.target.closest('.jgrid__item');
-    if (!a || e.metaKey || e.ctrlKey) return;
-    e.preventDefault();
-    openAlbumAt(+a.dataset.i);
-  });
   // Tải trước PhotoSwipe khi khu Album sắp hiện ra để lần bấm đầu mở ngay
   if ('IntersectionObserver' in window) {
     const pio = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { pio.disconnect(); loadPswp(); } }, { rootMargin: '400px' });

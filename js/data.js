@@ -45,33 +45,42 @@ window.WEDDING = {
 
   // Album: ảnh trong images/anh chon → scripts/convert_webp.py → images/al-xx-800/-1600/-3200.webp
   // w/h = kích thước bản -3200 (để xếp lưới & phóng to không bị nhảy)
+  // Kiểu hiển thị Album: 'justified' | 'magazine' | 'chapters' | 'slideshow'
+  // (mở trang với ?chon để thử từng kiểu trước khi chốt)
+  albumLayout: 'justified',
+  // Chương ảnh cho kiểu 'chapters'; `feat: true` = ảnh lớn (kiểu tạp chí / ảnh mở chương)
+  albumChapters: [
+    { key: 'lop', title: 'Lớp học 31.10' },
+    { key: 'hanh', title: 'Hành lang' },
+    { key: 'hoa', title: 'Hoa xanh' }
+  ],
   galleries: [
     {
       key: 'album',
       title: 'Album',
       photos: [
-        { id: 'images/al-01', w: 3200, h: 2133 },
-        { id: 'images/al-02', w: 2410, h: 3615 },
-        { id: 'images/al-03', w: 2656, h: 3984 },
-        { id: 'images/al-04', w: 3200, h: 2133 },
-        { id: 'images/al-05', w: 3200, h: 1799 },
-        { id: 'images/al-06', w: 3200, h: 1800 },
-        { id: 'images/al-07', w: 3200, h: 1800 },
-        { id: 'images/al-08', w: 3200, h: 1800 },
-        { id: 'images/al-09', w: 3200, h: 1800 },
-        { id: 'images/al-10', w: 3200, h: 1799 },
-        { id: 'images/al-11', w: 3200, h: 1800 },
-        { id: 'images/al-12', w: 3200, h: 1800 },
-        { id: 'images/al-13', w: 2236, h: 3972 },
-        { id: 'images/al-14', w: 2178, h: 3872 },
-        { id: 'images/al-15', w: 3200, h: 1800 },
-        { id: 'images/al-16', w: 3200, h: 1800 },
-        { id: 'images/al-17', w: 3200, h: 1800 },
-        { id: 'images/al-18', w: 3200, h: 1799 },
-        { id: 'images/al-19', w: 3200, h: 1800 },
-        { id: 'images/al-20', w: 3200, h: 1800 },
-        { id: 'images/al-21', w: 3200, h: 1800 },
-        { id: 'images/al-22', w: 3200, h: 1800 }
+        { id: 'images/al-01', w: 3200, h: 2133, g: 'hanh' },
+        { id: 'images/al-02', w: 2410, h: 3615, g: 'hanh' },
+        { id: 'images/al-03', w: 2656, h: 3984, g: 'lop' },
+        { id: 'images/al-04', w: 3200, h: 2133, g: 'hoa' },
+        { id: 'images/al-05', w: 3200, h: 1799, g: 'hanh' },
+        { id: 'images/al-06', w: 3200, h: 1800, g: 'lop' },
+        { id: 'images/al-07', w: 3200, h: 1800, g: 'lop' },
+        { id: 'images/al-08', w: 3200, h: 1800, g: 'lop', feat: true },
+        { id: 'images/al-09', w: 3200, h: 1800, g: 'lop' },
+        { id: 'images/al-10', w: 3200, h: 1799, g: 'lop' },
+        { id: 'images/al-11', w: 3200, h: 1800, g: 'lop' },
+        { id: 'images/al-12', w: 3200, h: 1800, g: 'hanh', feat: true },
+        { id: 'images/al-13', w: 2236, h: 3972, g: 'hanh' },
+        { id: 'images/al-14', w: 2178, h: 3872, g: 'hanh' },
+        { id: 'images/al-15', w: 3200, h: 1800, g: 'hanh' },
+        { id: 'images/al-16', w: 3200, h: 1800, g: 'hanh' },
+        { id: 'images/al-17', w: 3200, h: 1800, g: 'hoa', feat: true },
+        { id: 'images/al-18', w: 3200, h: 1799, g: 'hoa' },
+        { id: 'images/al-19', w: 3200, h: 1800, g: 'hoa' },
+        { id: 'images/al-20', w: 3200, h: 1800, g: 'hoa' },
+        { id: 'images/al-21', w: 3200, h: 1800, g: 'hoa' },
+        { id: 'images/al-22', w: 3200, h: 1800, g: 'hoa' }
       ]
     }
   ]
