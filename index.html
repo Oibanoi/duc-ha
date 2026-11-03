@@ -66,6 +66,7 @@
         <a href="#wedding"><small>01</small>Hôn lễ</a>
         <a href="#gallery"><small>02</small>Album ảnh</a>
         <a href="#details"><small>03</small>Thông tin</a>
+        <a href="#wishes"><small>04</small>Gửi lời chúc</a>
       </nav>
       <p class="menu__foot">Trần Doanh &amp; Nguyễn Luyến · 14.11.2026</p>
     </div>
@@ -275,6 +276,37 @@
             </div>
           </details>
         </div>
+      </section>
+
+      <!-- ============ LỜI CHÚC ============ -->
+      <section class="wishes" id="wishes" data-chapter="Lời chúc">
+        <header class="sec-head">
+          <span class="sec-head__num">04</span>
+          <h2 class="sec-head__title">Lời chúc</h2>
+        </header>
+        <p class="wishes__lead">Gửi đôi lời đến Doanh &amp; Luyến — lời chúc của bạn sẽ bay lên ngay bên dưới.</p>
+
+        <div class="wishes__stage" id="wishStage">
+          <p class="wishes__empty" id="wishEmpty">Chưa có lời chúc nào. Hãy là người đầu tiên!</p>
+        </div>
+
+        <form class="wishes__form" id="wishForm" novalidate>
+          <label class="wishes__field">
+            <span>Tên của bạn</span>
+            <input name="name" type="text" maxlength="40" autocomplete="name" required />
+          </label>
+          <label class="wishes__field">
+            <span>Lời chúc</span>
+            <textarea name="msg" rows="3" maxlength="300" required></textarea>
+            <small class="wishes__left" id="wishLeft">300</small>
+          </label>
+          <!-- Bẫy bot: người dùng không thấy ô này -->
+          <input class="wishes__hp" name="hp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <div class="wishes__actions">
+            <button class="btn btn--primary" type="submit" id="wishSend">Gửi lời chúc</button>
+            <p class="wishes__status" id="wishStatus" role="status" aria-live="polite"></p>
+          </div>
+        </form>
       </section>
 
       <!-- ============ THE END ============ -->

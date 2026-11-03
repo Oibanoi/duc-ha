@@ -1190,6 +1190,100 @@
   }
   tick();
 
+  /* ---------------------------------------------------------
+     Lời chúc: gửi & lưu vào Google Sheets (Apps Script — scripts/guestbook.gs)
+     Lời chúc hiện thành thiệp nhỏ bay lên trong khung, lần lượt, lặp lại.
+     --------------------------------------------------------- */
+  (() => {
+    const URL_GB = W.guestbookUrl || '';
+    const stage = $('#wishStage'), empty = $('#wishEmpty');
+    const form = $('#wishForm'), status = $('#wishStatus'), send = $('#wishSend'), left = $('#wishLeft');
+    if (!stage || !form) return;
+    const BAD = ['địt', 'đụ', 'lồn', 'buồi', 'cặc', 'đéo', 'đĩ', 'đm', 'dm', 'dcm', 'đcm', 'vcl', 'vkl', 'vl', 'cc', 'clm', 'cl', 'cmm', 'dmm', 'đmm', 'fuck', 'shit', 'bitch'];
+    const isBad = t => t.toLowerCase().normalize('NFC').split(/[^\p{L}\p{N}]+/u).some(w => BAD.includes(w));
+    let items = [], queue = [], timer = null, visible = false, lane = 0;
+
+    const LANES = () => (innerWidth < 600 ? 2 : innerWidth < 1100 ? 3 : 4);
+    function makeCard(it, mine) {
+      const c = document.createElement('figure');
+      c.className = 'wish' + (mine ? ' is-mine' : '');
+      const q = document.createElement('blockquote'); q.textContent = it.msg;
+      const f = document.createElement('figcaption'); f.textContent = it.name;
+      c.append(q, f);
+      return c;
+    }
+    function spawn(it, mine = false) {
+      if (!it) return;
+      const n = LANES(), k = (lane++) % n;
+      const c = makeCard(it, mine);
+      c.style.setProperty('--x', `${(k + 0.5) / n * 100}%`);
+      c.style.setProperty('--sway', `${(k % 2 ? 1 : -1) * (8 + Math.random() * 14)}px`);
+      c.style.setProperty('--tilt', `${(Math.random() * 4 - 2).toFixed(1)}deg`);
+      c.style.setProperty('--dur', `${(15 + Math.random() * 5).toFixed(1)}s`);
+      c.style.setProperty('--h', `${stage.clientHeight}px`);
+      c.addEventListener('animationend', () => c.remove());
+      stage.appendChild(c);
+    }
+    function nextFromQueue() {
+      if (!items.length) return;
+      if (!queue.length) queue = items.slice().sort(() => Math.random() - 0.5);
+      spawn(queue.shift());
+    }
+    function start() {
+      if (timer || !items.length || reduceMotion) return;
+      nextFromQueue();
+      timer = setInterval(nextFromQueue, innerWidth < 600 ? 3600 : 2600);
+    }
+    function stop() { clearInterval(timer); timer = null; }
+    function renderStatic() { // giảm chuyển động: hiện danh sách tĩnh
+      stage.classList.add('is-static');
+      $$('.wish', stage).forEach(x => x.remove());
+      items.slice(-12).reverse().forEach(it => stage.appendChild(makeCard(it)));
+    }
+    function setItems(list) {
+      items = list.filter(it => it && it.name && it.msg && !isBad(it.name + ' ' + it.msg));
+      empty.hidden = items.length > 0;
+      if (reduceMotion) renderStatic(); else if (visible) start();
+    }
+    function load() {
+      if (!URL_GB) return;
+      fetch(URL_GB).then(r => r.json()).then(d => { if (d && d.ok) setItems(d.items || []); }).catch(() => {});
+    }
+    load();
+    setInterval(() => { if (visible) load(); }, 60000);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(es => es.forEach(e => { visible = e.isIntersecting; visible ? start() : stop(); }), { threshold: 0.15 }).observe(stage);
+    } else { visible = true; }
+
+    const msgEl = form.elements.msg;
+    msgEl.addEventListener('input', () => { left.textContent = String(300 - msgEl.value.length); });
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const name = form.elements.name.value.trim(), msg = msgEl.value.trim(), hp = form.elements.hp.value;
+      if (!name || !msg) { status.textContent = 'Bạn nhập tên và lời chúc giúp nhé.'; (name ? msgEl : form.elements.name).focus(); return; }
+      if (isBad(name + ' ' + msg)) { status.textContent = 'Lời chúc có từ chưa phù hợp, bạn sửa lại giúp nhé.'; msgEl.focus(); return; }
+      const it = { name, msg, t: Date.now() };
+      const done = () => {
+        items.push(it); empty.hidden = true;
+        if (reduceMotion) renderStatic(); else { spawn(it, true); start(); }
+        form.reset(); left.textContent = '300';
+        status.textContent = 'Đã gửi lời chúc. Cảm ơn bạn!';
+      };
+      if (!URL_GB) { done(); return; } // chưa kết nối Sheets: chỉ hiện trên máy này
+      send.disabled = true; status.textContent = 'Đang gửi…';
+      fetch(URL_GB, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ name, msg, hp }) })
+        .then(r => r.json())
+        .then(d => {
+          if (d && d.ok) return done();
+          status.textContent = d && d.error === 'bad' ? 'Lời chúc có từ chưa phù hợp, bạn sửa lại giúp nhé.'
+            : d && d.error === 'slow' ? 'Bạn vừa gửi rồi, đợi một chút rồi gửi tiếp nhé.'
+            : 'Chưa gửi được, bạn thử lại sau ít phút nhé.';
+        })
+        .catch(() => { status.textContent = 'Chưa gửi được, bạn kiểm tra mạng rồi thử lại nhé.'; })
+        .finally(() => { send.disabled = false; });
+    });
+  })();
+
   /* The End → all photos */
   $("#allPhotosBtn").addEventListener("click", () => openAlbumAt(0));
   /* ---------------------------------------------------------
