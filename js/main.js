@@ -142,16 +142,6 @@
     if (e.target.closest("a")) setMenu(false);
   });
 
-  // Links to #rsvp open that accordion item
-  const rsvp = $("#rsvp");
-  const openRsvp = () => {
-    if (location.hash === "#rsvp") rsvp.open = true;
-  };
-  document.addEventListener("click", (e) => {
-    if (e.target.closest('a[href="#rsvp"]')) rsvp.open = true;
-  });
-  addEventListener("hashchange", openRsvp);
-  openRsvp();
 
   /* ---------------------------------------------------------
      Chapter indicator (desktop)
@@ -1163,7 +1153,6 @@
     `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`;
   const HEART =
     '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>';
-  const PIN =
     '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg>';
   const house = (f, mod) => `
     <article class="house house--${mod} reveal">
@@ -1175,7 +1164,6 @@
         <ul class="house__events">
           ${f.events.map((ev) => `<li><time>${ev.time}</time><span>${ev.title}<small>${ev.date}</small></span></li>`).join("")}
         </ul>
-        <a class="house__map" href="${f.map || mapUrl(f.address)}" target="_blank" rel="noopener">${PIN}Chỉ đường đến ${f.side.toLowerCase()}</a>
       </div>
     </article>`;
   $("#families").innerHTML =

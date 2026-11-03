@@ -600,14 +600,7 @@ ol { padding: 0; list-style: none; }
 .house__events time { font-size: 20px; color: var(--color-foreground); }
 .house__events span { display: grid; text-align: left; font-size: var(--fs-small); line-height: 1.35; }
 .house__events small { font-size: 14px; color: var(--color-muted); }
-.house__map {
-  display: inline-flex; align-items: center; gap: var(--s-8); min-height: 44px;
-  font-size: var(--fs-small); font-weight: 500; color: var(--color-accent);
-  text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px;
-}
-.house__map svg, .houses__mid svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.4; flex: none; }
-.house__map:hover { text-decoration-thickness: 2px; }
-.house__map:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
+.houses__mid svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.4; flex: none; }
 /* Đường giữa + trái tim (giống banner) */
 .houses__mid { display: flex; align-items: center; gap: var(--s-12); width: min(240px, 60%); margin: var(--s-64) 0; color: var(--color-accent); }
 .houses__mid i { flex: 1; height: 1px; background: var(--color-accent); opacity: 0.45; }
@@ -645,7 +638,6 @@ ol { padding: 0; list-style: none; }
 .timeline strong { font-size: 16px; }
 .timeline span { font-size: 18px; }
 
-.wedding__actions { display: flex; justify-content: center; margin-top: var(--s-80); padding: 0 var(--margin); }
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
@@ -683,8 +675,6 @@ ol { padding: 0; list-style: none; }
 .accordion__body { padding: 0 0 var(--s-24); max-width: 36em; line-height: 1.7; }
 
 /* RSVP callout — nổi bật nút xác nhận tham dự */
-.rsvp-cta { margin-top: var(--s-24); }
-.rsvp-cta .btn { min-width: 240px; }
 
 /* The End */
 .end {
