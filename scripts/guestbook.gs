@@ -1,3 +1,4 @@
+/** @OnlyCurrentDoc */
 /**
  * Sổ lời chúc cho thiệp cưới — Google Apps Script (dán vào Google Sheets).
  *
