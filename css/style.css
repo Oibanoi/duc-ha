@@ -445,6 +445,49 @@ ol { padding: 0; list-style: none; }
 .sshow__thumb.is-on { opacity: 1; outline: 2px solid var(--color-accent); outline-offset: -2px; }
 @media (min-width: 900px) { .sshow__thumb { width: 96px; } .sshow__nav--prev { left: 16px; } .sshow__nav--next { right: 16px; } }
 
+.album__rest { margin-top: var(--s-48); }
+
+/* Phóng to: 7 ảnh quanh tâm, cuộn → phóng ra kín màn hình (Motion scroll) */
+.album--zoom { max-width: none; padding: 0; }
+.album--zoom .album__rest { max-width: 1320px; margin-left: auto; margin-right: auto; padding: 0 var(--margin); }
+.zoom { height: 300vh; position: relative; }
+.zoom__sticky { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+.zoom__layer { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; will-change: transform; pointer-events: none; }
+.zoom__box {
+  --k: 1.6; position: relative; pointer-events: auto;
+  width: calc(var(--w) * var(--k) * 1vw); height: calc(var(--h) * 1vh);
+  top: calc(var(--t) * 1vh); left: calc(var(--l) * var(--k) * 1vw);
+}
+@media (min-width: 900px) { .zoom__box { --k: 1; } }
+.zoom__img { width: 100%; height: 100%; }
+
+/* Xếp chồng: ảnh sau trượt lên đè ảnh trước, ảnh dưới thu nhỏ & tối đi */
+.stk { display: grid; justify-items: center; }
+.stk__card {
+  position: sticky; top: calc(var(--nav-h) + 12px + var(--i) * 10px);
+  width: min(100%, 1000px); aspect-ratio: 3 / 2; margin-bottom: 14vh;
+  transform-origin: 50% 0; will-change: transform; box-shadow: 0 10px 30px rgba(20, 40, 79, 0.18);
+}
+.stk__card:last-child { margin-bottom: 0; }
+.stk__img { width: 100%; height: 100%; }
+
+/* Vòng xoay 3D: ảnh xếp quanh trụ, cuộn hoặc kéo để xoay */
+.album--ring { max-width: none; padding: 0; }
+.ring { height: 320vh; position: relative; }
+.ring__sticky { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: grid; place-items: center; }
+.ring__stage { --cw: 190px; perspective: 1300px; width: 100%; height: 100%; display: grid; place-items: center; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
+.ring__stage:active { cursor: grabbing; }
+.ring__spin {
+  --R: calc(var(--cw) * var(--n) * 1.1 / 6.2832);
+  position: relative; width: var(--cw); aspect-ratio: 3 / 4; transform-style: preserve-3d;
+  transform: translateZ(calc(-1 * var(--R))) rotateY(var(--rot, 0deg));
+}
+.ring__item { position: absolute; inset: 0; transform: rotateY(var(--a)) translateZ(var(--R)); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.ring__img { width: 100%; height: 100%; box-shadow: 0 8px 24px rgba(20, 40, 79, 0.2); }
+.ring__img img { pointer-events: none; -webkit-user-drag: none; }
+.ring__hint { position: absolute; bottom: calc(var(--s-48) + env(safe-area-inset-bottom)); left: 0; right: 0; text-align: center; font-size: var(--fs-small); color: var(--color-muted); }
+@media (min-width: 900px) { .ring__stage { --cw: 230px; perspective: 1800px; } }
+
 /* Bảng chọn kiểu (chỉ hiện khi mở ?chon) */
 .layout-pick {
   position: sticky; top: calc(var(--nav-h) + 8px); z-index: 20;

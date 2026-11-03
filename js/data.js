@@ -45,9 +45,11 @@ window.WEDDING = {
 
   // Album: ảnh trong images/anh chon → scripts/convert_webp.py → images/al-xx-800/-1600/-3200.webp
   // w/h = kích thước bản -3200 (để xếp lưới & phóng to không bị nhảy)
-  // Kiểu hiển thị Album: 'justified' | 'magazine' | 'chapters' | 'slideshow'
+  // Kiểu hiển thị Album: 'justified' | 'magazine' | 'chapters' | 'slideshow' | 'zoom' | 'stack' | 'ring'
   // (mở trang với ?chon để thử từng kiểu trước khi chốt)
   albumLayout: 'justified',
+  // Ảnh nổi bật cho kiểu 'zoom' (7 ảnh đầu, ảnh 1 ở giữa; ảnh 3 nên là ảnh dọc) và 'stack'
+  albumHighlights: ['al-08', 'al-12', 'al-13', 'al-17', 'al-07', 'al-21', 'al-01', 'al-04'],
   // Chương ảnh cho kiểu 'chapters'; `feat: true` = ảnh lớn (kiểu tạp chí / ảnh mở chương)
   albumChapters: [
     { key: 'lop', title: 'Lớp học 31.10' },
