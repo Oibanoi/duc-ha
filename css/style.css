@@ -705,23 +705,6 @@ ol { padding: 0; list-style: none; }
 .btn--primary:hover { background: transparent; color: var(--color-accent); }
 
 /* Details (progressive disclosure) */
-.details { padding: var(--section-y) 0; border-top: 1px solid var(--color-line); }
-.accordion { max-width: 760px; margin: 0 auto; padding: 0 var(--margin); }
-.accordion details { border-bottom: 1px solid var(--color-line); scroll-margin-top: calc(var(--nav-h) + 24px); }
-.accordion details:first-child { border-top: 1px solid var(--color-line); }
-.accordion summary {
-  list-style: none; cursor: pointer;
-  display: flex; justify-content: space-between; align-items: center; gap: var(--s-16);
-  min-height: 72px;
-  font-weight: 500; font-size: 18px; line-height: 1.35;
-}
-.accordion summary::-webkit-details-marker { display: none; }
-.accordion summary::after {
-  content: '+'; font-weight: 400; font-size: 22px; color: var(--color-muted);
-  transition: transform var(--t-normal) var(--ease);
-}
-.accordion details[open] summary::after { transform: rotate(45deg); }
-.accordion__body { padding: 0 0 var(--s-24); max-width: 36em; line-height: 1.7; }
 
 /* RSVP callout — nổi bật nút xác nhận tham dự */
 
