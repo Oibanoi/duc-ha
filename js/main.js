@@ -150,112 +150,68 @@
   }
 
   /* ---------------------------------------------------------
-     Album: cuộn ngang ghim bằng Motion (motion.dev)
-     Cuộn dọc trong khu Album → hàng ảnh lớn trượt ngang.
-     Nếu không tải được Motion / người dùng giảm chuyển động:
-     giữ hàng ảnh vuốt ngang thông thường (CSS scroll-snap).
+     Album: lưới ảnh justified + PhotoSwipe (photoswipe.com, MIT)
+     Mỗi ô có chiều rộng tỉ lệ với ảnh → các hàng cao bằng nhau, ảnh hiện trọn.
+     Bấm ảnh: PhotoSwipe phóng ra từ đúng ô đó (vuốt, chụm để zoom, vuốt xuống để đóng).
+     Không tải được PhotoSwipe → dùng trình xem ảnh sẵn có của trang.
      --------------------------------------------------------- */
-  const MOTION_URL = 'https://cdn.jsdelivr.net/npm/motion@11.11.17/+esm';
-  const hWrap = $('#hscroll');
-  const hTrack = $('#hTrack');
-  const hCount = $('#hCount');
-  const hBar = $('#hBar');
-  const hFigs = ALL.map((p, i) => {
-    const fig = document.createElement('figure');
-    fig.className = 'hs-item' + (p.land ? ' hs-item--land' : '');
-    fig.innerHTML = `<div class="ph js-open" data-photo="${p.id}" tabindex="0" role="button" aria-label="Mở ảnh ${i + 1}: ${p.cap}"></div>`;
-    fillFigure($('.ph', fig), p.id, p.land ? '(min-width: 900px) 110vh, 92vw' : '(min-width: 900px) 56vh, 82vw', p.alt);
-    hTrack.appendChild(fig);
-    return fig;
+  const PSWP = 'https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/';
+  const grid = $('#albumGrid');
+  grid.innerHTML = ALL.map((p, i) => {
+    const r = (p.w / p.h).toFixed(4);
+    return `<a class="jgrid__item" href="${p.id}-3200.webp" style="--r:${r}"
+      data-pswp-width="${p.w}" data-pswp-height="${p.h}"
+      data-pswp-srcset="${p.id}-800.webp 800w, ${p.id}-1600.webp 1600w, ${p.id}-3200.webp ${p.w}w"
+      data-i="${i}" aria-label="Xem ảnh ${i + 1} / ${ALL.length}"></a>`;
+  }).join('');
+  $$('.jgrid__item', grid).forEach(a => {
+    const p = ALL[+a.dataset.i];
+    const img = makeImg(p.id, `(min-width: 900px) ${Math.round(p.w / p.h * 300)}px, ${Math.round(p.w / p.h * 160)}px`, `Ảnh cưới ${+a.dataset.i + 1}`);
+    img.width = p.w; img.height = p.h;
+    a.appendChild(img);
   });
-  const setCount = i => { hCount.innerHTML = `${pad(i + 1)} <span>/ ${pad(hFigs.length)}</span>`; };
-  setCount(0);
-  // Parallax: ảnh bên trong khung trôi chậm hơn khung.
-  // Vị trí từng ảnh được đo sẵn (hMeasure) → mỗi khung hình chỉ GHI style, không đọc layout → không giật.
-  const hImgs = hFigs.map(f => $('img', f));
-  let hCenters = [], hOffset = 0, hLastBest = -1;
-  function hMeasure() {
-    hCenters = hFigs.map(f => f.offsetLeft + f.offsetWidth / 2);
+
+  let pswpReady = null;
+  function loadPswp() {
+    if (pswpReady) return pswpReady;
+    const css = document.createElement('link');
+    css.rel = 'stylesheet'; css.href = PSWP + 'photoswipe.css';
+    document.head.appendChild(css);
+    pswpReady = import(PSWP + 'photoswipe.esm.min.js').then(m => m.default);
+    pswpReady.catch(() => { pswpReady = null; });
+    return pswpReady;
   }
-  function hFx(progress, offset) {
-    hBar.style.transform = `scaleX(${progress.toFixed(4)})`;
-    const vw = innerWidth, mid = vw / 2;
-    let best = 0, bestD = Infinity;
-    for (let i = 0; i < hFigs.length; i++) {
-      const d = (hCenters[i] - offset - mid) / vw; // vị trí so với giữa màn hình (-1..1)
-      if (Math.abs(d) < bestD) { bestD = Math.abs(d); best = i; }
-      if (!reduceMotion && Math.abs(d) < 1.5) hImgs[i].style.transform = `translate3d(${(-d * 6).toFixed(2)}%, 0, 0) scale(1.14)`;
-    }
-    if (best !== hLastBest) { hLastBest = best; setCount(best); }
+  function openAlbumAt(index) {
+    const items = $$('.jgrid__item', grid);
+    loadPswp().then(PhotoSwipe => {
+      const pswp = new PhotoSwipe({
+        dataSource: items.map(a => ({
+          src: a.getAttribute('href'), srcset: a.dataset.pswpSrcset,
+          width: +a.dataset.pswpWidth, height: +a.dataset.pswpHeight,
+          msrc: $('img', a).currentSrc, element: a, alt: $('img', a).alt
+        })),
+        index,
+        bgOpacity: 0.96,
+        showHideAnimationType: reduceMotion ? 'none' : 'zoom',
+        wheelToZoom: true,
+        closeTitle: 'Đóng', zoomTitle: 'Phóng to', arrowPrevTitle: 'Ảnh trước', arrowNextTitle: 'Ảnh sau',
+        errorMsg: 'Không tải được ảnh này.'
+      });
+      pswp.addFilter('thumbEl', (el, data) => data.element || el);
+      pswp.init();
+    }).catch(() => openLightbox(index, { from: items[index] }));
   }
-  const swipeProgress = () => {
-    const max = hTrack.scrollWidth - hTrack.clientWidth;
-    return max > 0 ? hTrack.scrollLeft / max : 0;
-  };
-
-  // Gợi ý vuốt (điện thoại): ẩn sau lần vuốt đầu tiên
-  const hHint = $('#hHint');
-  hTrack.addEventListener('scroll', () => { if (hTrack.scrollLeft > 20) hHint.classList.add('is-gone'); }, { passive: true });
-
-  // Điện thoại / màn nhỏ: vuốt ngang tự nhiên (scroll-snap). Máy tính: ghim + cuộn dọc → trượt ngang.
-  const pinMQ = matchMedia('(min-width: 900px) and (hover: hover)');
-  let motion = null, stopFx = null, measure = null;
-
-  function setupGallery() {
-    if (stopFx) { stopFx(); stopFx = null; }
-    if (measure) { removeEventListener('resize', measure); measure = null; }
-    hWrap.style.height = '';
-    hTrack.style.transform = '';
-    chapterList.classList.remove('is-muted');
-    const pin = !!motion && pinMQ.matches && !reduceMotion;
-    hWrap.classList.toggle('is-pinned', pin);
-    hWrap.classList.toggle('is-swipe', !pin);
-    hMeasure();
-
-    if (pin) {
-      let dist = 0;
-      measure = () => {
-        dist = Math.max(0, hTrack.scrollWidth - innerWidth);
-        hWrap.style.height = `${dist + innerHeight}px`; // quãng trượt ngang + 1 màn hình
-        hMeasure();
-      };
-      measure();
-      addEventListener('resize', measure);
-      stopFx = motion.scroll(progress => {
-        const x = Math.round(progress * dist);
-        hTrack.style.transform = `translate3d(${-x}px, 0, 0)`;
-        chapterList.classList.toggle('is-muted', progress > 0 && progress < 1);
-        hFx(progress, x);
-      }, { target: hWrap, offset: ['start start', 'end end'] });
-    } else if (motion) {
-      stopFx = motion.scroll(progress => hFx(progress, hTrack.scrollLeft), { container: hTrack, axis: 'x' });
-    } else {
-      const f = () => hFx(swipeProgress(), hTrack.scrollLeft);
-      hTrack.addEventListener('scroll', f, { passive: true });
-      f();
-      stopFx = () => hTrack.removeEventListener('scroll', f);
-    }
+  grid.addEventListener('click', e => {
+    const a = e.target.closest('.jgrid__item');
+    if (!a || e.metaKey || e.ctrlKey) return;
+    e.preventDefault();
+    openAlbumAt(+a.dataset.i);
+  });
+  // Tải trước PhotoSwipe khi khu Album sắp hiện ra để lần bấm đầu mở ngay
+  if ('IntersectionObserver' in window) {
+    const pio = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { pio.disconnect(); loadPswp(); } }, { rootMargin: '400px' });
+    pio.observe(grid);
   }
-  setupGallery();
-  hFigs.forEach((f, i) => hImgs[i].addEventListener('load', () => { measure ? measure() : hMeasure(); }, { once: true }));
-  addEventListener('resize', () => { if (!measure) hMeasure(); });
-  pinMQ.addEventListener('change', setupGallery);
-
-  import(MOTION_URL).then(m => {
-    motion = m;
-    setupGallery();
-    if (reduceMotion) return;
-    // Hiện dần lần lượt khi khu Album xuất hiện
-    hFigs.forEach(f => { f.style.opacity = '0'; });
-    const io = new IntersectionObserver(es => {
-      if (!es.some(e => e.isIntersecting)) return;
-      io.disconnect();
-      m.animate(hFigs, { opacity: [0, 1], y: [48, 0] }, { duration: 0.8, delay: m.stagger(0.07), ease: [0.22, 0.61, 0.36, 1] });
-    }, { threshold: 0.3 });
-    io.observe($('.hscroll__sticky', hWrap));
-  }).catch(() => { /* không tải được Motion: giữ bản vuốt ngang */ });
-
-  $('#stackAll').addEventListener('click', () => openLightbox(0, { sheet: true }));
 
   /* ---------------------------------------------------------
      History: back button closes overlays (important on mobile)
@@ -771,7 +727,7 @@
   tick();
 
   /* The End → all photos */
-  $('#allPhotosBtn').addEventListener('click', () => openLightbox(0, { sheet: true }));
+  $('#allPhotosBtn').addEventListener('click', () => openAlbumAt(0));
   /* ---------------------------------------------------------
      Nhạc nền: tự phát khi mở trang. Nếu trình duyệt chặn (chưa có
      tương tác), nhạc bắt đầu ở lần chạm/bấm phím đầu tiên.

@@ -31,16 +31,7 @@
     <link
       rel="preload"
       as="image"
-      media="(min-aspect-ratio: 4/3)"
-      imagesrcset="images/banner-800.webp 800w, images/banner-1600.webp 1600w, images/banner-3200.webp 3200w"
-      imagesizes="100vw"
-      fetchpriority="high"
-    />
-    <link
-      rel="preload"
-      as="image"
-      media="(max-aspect-ratio: 4/3)"
-      imagesrcset="images/dl-08-800.webp 800w, images/dl-08-1600.webp 1600w, images/dl-08-3200.webp 3200w"
+      imagesrcset="images/banner-800.webp 800w, images/banner-1600.webp 1600w, images/banner-3200.webp 1706w"
       imagesizes="100vw"
       fetchpriority="high"
     />
@@ -88,29 +79,18 @@
       <section class="hero" id="home" data-chapter="Mở đầu">
         <div class="hero__media">
           <!-- Màn hình ngang: banner (đã in sẵn tên + ngày). Màn hình dọc: ảnh dọc + chữ phủ lên -->
-          <picture>
-            <source
-              media="(min-aspect-ratio: 4/3)"
-              srcset="
-                images/banner-800.webp   800w,
-                images/banner-1600.webp 1600w,
-                images/banner-3200.webp 3200w
-              "
-              sizes="100vw"
-            />
-            <img
-              src="images/dl-08-1600.webp"
-              srcset="
-                images/dl-08-800.webp   800w,
-                images/dl-08-1600.webp 1600w,
-                images/dl-08-3200.webp 3200w
-              "
-              sizes="100vw"
-              alt="Trần Doanh và Nguyễn Luyến trên hành lang giảng đường"
-              fetchpriority="high"
-              decoding="async"
-            />
-          </picture>
+          <img
+            src="images/banner-1600.webp"
+            srcset="
+              images/banner-800.webp   800w,
+              images/banner-1600.webp 1600w,
+              images/banner-3200.webp 1706w
+            "
+            sizes="100vw"
+            alt="Trần Doanh và Nguyễn Luyến nắm tay nhau ở hành lang"
+            fetchpriority="high"
+            decoding="async"
+          />
         </div>
         <div class="hero__text">
           <p class="kicker">Save the date</p>
@@ -284,25 +264,8 @@
           <h2 class="sec-head__title">Album ảnh</h2>
         </header>
         <!-- Cuộn ngang ghim (Motion): cuộn dọc → ảnh trượt ngang. Không có JS/Motion → hàng ảnh vuốt ngang -->
-        <div class="hscroll" id="hscroll">
-          <div class="hscroll__sticky">
-            <div class="hscroll__track" id="hTrack"></div>
-            <p class="hscroll__hint" id="hHint" aria-hidden="true">
-              Vuốt để xem thêm <span>→</span>
-            </p>
-            <div class="hscroll__foot">
-              <p class="hscroll__count" id="hCount" aria-live="polite"></p>
-              <div class="hscroll__bar" aria-hidden="true">
-                <i id="hBar"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="hscroll__after">
-          <button class="btn" id="stackAll" type="button">
-            Xem tất cả ảnh
-          </button>
-        </div>
+        <!-- Lưới ảnh justified: các hàng cao bằng nhau, ảnh hiện trọn; bấm để xem lớn (PhotoSwipe) -->
+        <div class="jgrid" id="albumGrid"></div>
       </section>
 
       <!-- ============ DETAILS ============ -->

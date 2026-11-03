@@ -43,23 +43,35 @@ window.WEDDING = {
     }
   ],
 
-  // Ảnh do scripts/convert_webp.py tạo trong images/ (dl-xx-800/-1600/-3200.webp)
-  // Hiển thị dạng chồng ảnh polaroid; `land: true` = ảnh ngang
+  // Album: ảnh trong images/anh chon → scripts/convert_webp.py → images/al-xx-800/-1600/-3200.webp
+  // w/h = kích thước bản -3200 (để xếp lưới & phóng to không bị nhảy)
   galleries: [
     {
       key: 'album',
-      title: 'Khoảnh khắc',
+      title: 'Album',
       photos: [
-        { id: 'images/dl-03', cap: 'Đoá hồng xanh' },
-        { id: 'images/dl-08', cap: 'Hành lang nắng' },
-        { id: 'images/dl-10', cap: 'Lời thì thầm', land: true },
-        { id: 'images/dl-01', cap: 'Trước cổng trường' },
-        { id: 'images/dl-09', cap: 'Bên hàng cột', land: true },
-        { id: 'images/dl-02', cap: 'Bậc thềm quen' },
-        { id: 'images/dl-07', cap: 'Lớp học ngày 31.10', land: true },
-        { id: 'images/dl-04', cap: 'Tay trong tay' },
-        { id: 'images/dl-06', cap: 'Bên khóm hoa vàng', land: true },
-        { id: 'images/dl-05', cap: 'Giữa vườn hoa' }
+        { id: 'images/al-01', w: 3200, h: 2133 },
+        { id: 'images/al-02', w: 2410, h: 3615 },
+        { id: 'images/al-03', w: 2656, h: 3984 },
+        { id: 'images/al-04', w: 3200, h: 2133 },
+        { id: 'images/al-05', w: 3200, h: 1799 },
+        { id: 'images/al-06', w: 3200, h: 1800 },
+        { id: 'images/al-07', w: 3200, h: 1800 },
+        { id: 'images/al-08', w: 3200, h: 1800 },
+        { id: 'images/al-09', w: 3200, h: 1800 },
+        { id: 'images/al-10', w: 3200, h: 1799 },
+        { id: 'images/al-11', w: 3200, h: 1800 },
+        { id: 'images/al-12', w: 3200, h: 1800 },
+        { id: 'images/al-13', w: 2236, h: 3972 },
+        { id: 'images/al-14', w: 2178, h: 3872 },
+        { id: 'images/al-15', w: 3200, h: 1800 },
+        { id: 'images/al-16', w: 3200, h: 1800 },
+        { id: 'images/al-17', w: 3200, h: 1800 },
+        { id: 'images/al-18', w: 3200, h: 1799 },
+        { id: 'images/al-19', w: 3200, h: 1800 },
+        { id: 'images/al-20', w: 3200, h: 1800 },
+        { id: 'images/al-21', w: 3200, h: 1800 },
+        { id: 'images/al-22', w: 3200, h: 1800 }
       ]
     }
   ]
