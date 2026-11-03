@@ -46,7 +46,7 @@ window.WEDDING = {
   // Album: ảnh trong images/anh chon → scripts/convert_webp.py → images/al-xx-800/-1600/-3200.webp
   // w/h = kích thước bản -3200 (để xếp lưới & phóng to không bị nhảy)
   // Sổ lời chúc: URL "Ứng dụng web" của Google Apps Script (xem scripts/guestbook.gs). Để trống = chưa kết nối.
-  guestbookUrl: '',
+  guestbookUrl: 'https://script.google.com/macros/s/AKfycbyYC8kl7lgZEmEdahZnLouLrvTDS7wP6TfuoGQUpXia5YFwPkWlkTdXHSedbTcyiUfA/exec',
 
   // Kiểu hiển thị Album: 'justified' | 'magazine' | 'chapters' | 'slideshow' | 'zoom' | 'stack' | 'ring'
   // (mở trang với ?chon để thử từng kiểu trước khi chốt)
