@@ -65,7 +65,7 @@
         transition: transform 240ms ease-in 200ms, opacity 300ms ease 1100ms;
       }
       .gate__mark { position: relative; display: grid; justify-items: center; gap: 26px; transition: transform 600ms var(--ease-wall) 250ms, opacity 400ms ease 300ms; }
-      /* Đĩa CD TIX3 đang quay (images/icon.jpg) — hợp với bài "Vòng Xoay" */
+      /* Đĩa CD TIX3 đang quay (images/icon.jpg) — đang phát "Trên Đỉnh Gió" */
       .disc {
         --d: min(72vw, 380px);
         position: relative; width: var(--d); aspect-ratio: 1; border-radius: 50%;
@@ -143,8 +143,8 @@
         <span class="gate__cta">Chạm để vào</span>
       </span>
     </button>
-    <!-- Nhạc nền: Vòng Xoay — Bức Tường (3:09 → hết), tự phát khi vào trang -->
-    <audio id="bgm" src="audio/vong-xoay.m4a" preload="auto" autoplay loop></audio>
+    <!-- Nhạc nền: Trên Đỉnh Gió — Trần Tuấn Hùng (3:40 → hết), tự phát khi vào trang -->
+    <audio id="bgm" src="audio/tren-dinh-gio.m4a" preload="auto" autoplay loop></audio>
     <button class="sound" id="sound" type="button" aria-pressed="true" aria-label="Bật/tắt nhạc">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path class="on" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="off" d="M17 9l5 6M22 9l-5 6"/></svg>
       <span class="on">Tắt nhạc</span><span class="off">Bật nhạc</span>
