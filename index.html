@@ -2,13 +2,22 @@
 <html lang="vi">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
     <title>TIX3 Live Tour 2026 — Bức Tường</title>
-    <meta name="description" content="Bức Tường — TIX3 Live Tour 2026. Hà Nội 12/12, TP. HCM 26/12. One wall, many worlds." />
+    <meta
+      name="description"
+      content="Bức Tường — TIX3 Live Tour 2026. Hà Nội 12/12, TP. HCM 26/12. One wall, many worlds."
+    />
     <meta name="theme-color" content="#E8E8ED" />
     <meta property="og:title" content="TIX3 Live Tour 2026 — Bức Tường" />
     <meta property="og:description" content="Hà Nội 12/12 · TP. HCM 26/12" />
-    <meta property="og:image" content="https://tix3-live-tour.vercel.app/images/poster-og.jpg" />
+    <meta
+      property="og:image"
+      content="https://tix3-live-tour.vercel.app/images/poster-og.jpg"
+    />
     <meta property="og:url" content="https://tix3-live-tour.vercel.app/" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="vi_VN" />
@@ -18,235 +27,524 @@
     <link rel="apple-touch-icon" href="images/icon-400.webp" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600&display=swap" />
-    <script>document.documentElement.classList.add('js')</script>
-    <link rel="preload" as="image" imagesrcset="images/poster-800.webp 800w, images/poster-1200.webp 1200w, images/poster-1800.webp 1800w" imagesizes="(min-aspect-ratio: 9/14) calc(100svh * 1800 / 2800), 100vw" fetchpriority="high" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600&display=swap"
+    />
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+    <link
+      rel="preload"
+      as="image"
+      imagesrcset="images/poster-800.webp 800w, images/poster-1200.webp 1200w, images/poster-1800.webp 1800w"
+      imagesizes="(min-aspect-ratio: 9/14) calc(100svh * 1800 / 2800), 100vw"
+      fetchpriority="high"
+    />
     <style>
-      html, body { margin: 0; }
-      body { background: linear-gradient(#ffffff, #dcdce1); }
+      html,
+      body {
+        margin: 0;
+      }
+      body {
+        background: linear-gradient(#ffffff, #dcdce1);
+      }
       :root {
-        --font: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+        --font:
+          "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
         --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
       }
       /* overflow: clip giữ poster trong khung khi nó "đáp xuống" (scale 1.05 → 1), không sinh thanh cuộn ngang */
-      .stage { min-height: 100svh; display: grid; place-items: center; overflow: clip; }
-      .poster { display: block; width: 100%; height: auto; }
+      .stage {
+        min-height: 100svh;
+        display: grid;
+        place-items: center;
+        overflow: clip;
+      }
+      .poster {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
       /* Vào trang: khi tường tách đôi, poster đáp nhẹ từ 1.05 về 1 (một lần, 1.1 s) */
-      html.is-entered .poster { animation: settle 1100ms var(--ease-enter) 300ms both; }
-      @keyframes settle { from { transform: scale(1.05); } }
+      html.is-entered .poster {
+        animation: settle 1100ms var(--ease-enter) 300ms both;
+      }
+      @keyframes settle {
+        from {
+          transform: scale(1.05);
+        }
+      }
       /* Sơ đồ khu vực: đúng một màn hình; tiêu đề ở trên, sơ đồ lớn nhất có thể mà vẫn vừa màn hình */
       .seatmap {
-        box-sizing: border-box; min-height: 100svh;
-        display: grid; justify-items: center; align-content: center; gap: clamp(16px, 3vh, 32px);
+        box-sizing: border-box;
+        min-height: 100svh;
+        display: grid;
+        justify-items: center;
+        align-content: center;
+        gap: clamp(16px, 3vh, 32px);
         padding: 64px 0 calc(88px + env(safe-area-inset-bottom));
       }
       .seatmap__title {
-        margin: 0; padding: 0 16px; text-align: center; text-wrap: balance;
-        font: 600 clamp(20px, 2.4vw, 28px)/1.25 var(--font); letter-spacing: -0.01em;
-        color: #231F20;
+        margin: 0;
+        padding: 0 16px;
+        text-align: center;
+        text-wrap: balance;
+        font: 600 clamp(20px, 2.4vw, 28px)/1.25 var(--font);
+        letter-spacing: -0.01em;
+        color: #231f20;
       }
       .seatmap__img {
-        display: block; height: auto;
-        width: min(100%, 960px, calc((100svh - 200px) * 1020 / 800));
-        -webkit-mask: linear-gradient(90deg, transparent, #000 6% 94%, transparent), linear-gradient(transparent, #000 6% 94%, transparent);
+        display: block;
+        height: auto;
+        width: min(100%, 960px, calc((100svh - 200px) * 1280 / 1112));
+        -webkit-mask:
+          linear-gradient(90deg, transparent, #000 6% 94%, transparent),
+          linear-gradient(transparent, #000 6% 94%, transparent);
         -webkit-mask-composite: source-in;
-                mask: linear-gradient(90deg, transparent, #000 6% 94%, transparent), linear-gradient(transparent, #000 6% 94%, transparent);
-                mask-composite: intersect;
+        mask:
+          linear-gradient(90deg, transparent, #000 6% 94%, transparent),
+          linear-gradient(transparent, #000 6% 94%, transparent);
+        mask-composite: intersect;
       }
       /* Khoảnh khắc duy nhất khi cuộn: sơ đồ "hiện màu" như ảnh in ra, một lần khi vào tầm nhìn.
          Chỉ áp khi có JS; không JS hoặc giảm chuyển động thì sơ đồ hiện đủ màu ngay */
       html.js .seatmap__img {
-        filter: grayscale(1) contrast(0.9) brightness(1.06); transform: scale(0.985);
-        transition: filter 1400ms var(--ease-enter), transform 1400ms var(--ease-enter);
+        filter: grayscale(1) contrast(0.9) brightness(1.06);
+        transform: scale(0.985);
+        transition:
+          filter 1400ms var(--ease-enter),
+          transform 1400ms var(--ease-enter);
       }
-      html.js .seatmap.is-in .seatmap__img { filter: none; transform: none; }
+      html.js .seatmap.is-in .seatmap__img {
+        filter: none;
+        transform: none;
+      }
       /* Màn hình rộng hơn tỉ lệ poster (9:14): poster cao vừa màn hình, canh giữa */
       .sound {
-        position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 2;
-        display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px;
-        border: 0; border-radius: 999px; cursor: pointer;
-        font: 500 14px/1 var(--font); color: #fff;
-        background: rgba(20, 20, 28, 0.72); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-        transition: transform 120ms ease-out, background-color 120ms ease-out;
+        position: fixed;
+        right: 16px;
+        bottom: calc(16px + env(safe-area-inset-bottom));
+        z-index: 2;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 44px;
+        padding: 0 16px;
+        border: 0;
+        border-radius: 999px;
+        cursor: pointer;
+        font: 500 14px/1 var(--font);
+        color: #fff;
+        background: rgba(20, 20, 28, 0.72);
+        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: blur(8px);
+        transition:
+          transform 120ms ease-out,
+          background-color 120ms ease-out;
       }
       @media (hover: hover) and (pointer: fine) {
-        .sound:hover { transform: translateY(-1px); background-color: rgba(20, 20, 28, 0.86); transition-duration: 150ms; }
+        .sound:hover {
+          transform: translateY(-1px);
+          background-color: rgba(20, 20, 28, 0.86);
+          transition-duration: 150ms;
+        }
       }
-      .sound:active { transform: translateY(1px) scale(0.985); transition-duration: 90ms; }
-      .sound:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-      .sound svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; }
-      .sound .off { display: none; }
-      .sound[aria-pressed="false"] .on { display: none; }
-      .sound[aria-pressed="false"] .off { display: inline; }
+      .sound:active {
+        transform: translateY(1px) scale(0.985);
+        transition-duration: 90ms;
+      }
+      .sound:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 2px;
+      }
+      .sound svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.6;
+      }
+      .sound .off {
+        display: none;
+      }
+      .sound[aria-pressed="false"] .on {
+        display: none;
+      }
+      .sound[aria-pressed="false"] .off {
+        display: inline;
+      }
       /* Màn chào "bức tường": đĩa CD quay; chạm → đĩa quay nhanh, nứt dọc giữa → tường tách đôi, nhạc bật
          (trình duyệt không cho tự phát nhạc có tiếng nên cần 1 lần chạm) */
-      :root { --ink: #231F20; --paper: 242, 242, 244; --ease-wall: cubic-bezier(0.7, 0, 0.2, 1); }
+      :root {
+        --ink: #231f20;
+        --paper: 242, 242, 244;
+        --ease-wall: cubic-bezier(0.7, 0, 0.2, 1);
+      }
       .gate {
-        position: fixed; inset: 0; z-index: 3; display: grid; place-items: center;
-        padding: 24px; border: 0; background: none; cursor: pointer; color: var(--ink);
+        position: fixed;
+        inset: 0;
+        z-index: 3;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        border: 0;
+        background: none;
+        cursor: pointer;
+        color: var(--ink);
         -webkit-tap-highlight-color: transparent;
       }
       /* Lớp mờ liền khối khi chờ; lúc mở mới đổi sang 2 nửa trượt ra (tránh đường nối giữa 2 nửa) */
-      .gate__veil, .gate__half {
-        position: absolute; top: 0; bottom: 0;
-        background: rgba(var(--paper), 0.5);
-        -webkit-backdrop-filter: blur(7px) saturate(0.85); backdrop-filter: blur(7px) saturate(0.85);
-      }
-      .gate__veil { left: 0; right: 0; }
-      .gate.is-open .gate__veil { visibility: hidden; }
-      .gate__half { visibility: hidden; }
-      .gate.is-open .gate__half { visibility: visible; }
+      .gate__veil,
       .gate__half {
-        position: absolute; top: 0; bottom: 0; width: 50%;
+        position: absolute;
+        top: 0;
+        bottom: 0;
         background: rgba(var(--paper), 0.5);
-        -webkit-backdrop-filter: blur(7px) saturate(0.85); backdrop-filter: blur(7px) saturate(0.85);
+        -webkit-backdrop-filter: blur(7px) saturate(0.85);
+        backdrop-filter: blur(7px) saturate(0.85);
+      }
+      .gate__veil {
+        left: 0;
+        right: 0;
+      }
+      .gate.is-open .gate__veil {
+        visibility: hidden;
+      }
+      .gate__half {
+        visibility: hidden;
+      }
+      .gate.is-open .gate__half {
+        visibility: visible;
+      }
+      .gate__half {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 50%;
+        background: rgba(var(--paper), 0.5);
+        -webkit-backdrop-filter: blur(7px) saturate(0.85);
+        backdrop-filter: blur(7px) saturate(0.85);
         transition: transform 1000ms var(--ease-wall) 420ms;
       }
-      .gate__half--l { left: 0; }
-      .gate__half--r { right: 0; }
+      .gate__half--l {
+        left: 0;
+      }
+      .gate__half--r {
+        right: 0;
+      }
       /* Vết nứt: mang màu sơn của poster */
       .gate__crack {
-        position: absolute; left: 50%; top: 0; bottom: 0; width: 3px; translate: -50% 0;
-        background: linear-gradient(#1F5E7A, #B3262E 35%, #E3A13B 65%, #1F5E7A);
-        transform: scaleY(0); transform-origin: 50% 0;
-        transition: transform 240ms ease-in 200ms, opacity 300ms ease 1100ms;
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        translate: -50% 0;
+        background: linear-gradient(#1f5e7a, #b3262e 35%, #e3a13b 65%, #1f5e7a);
+        transform: scaleY(0);
+        transform-origin: 50% 0;
+        transition:
+          transform 240ms ease-in 200ms,
+          opacity 300ms ease 1100ms;
       }
-      .gate__mark { position: relative; display: grid; justify-items: center; gap: 26px; transition: transform 600ms var(--ease-wall) 250ms, opacity 400ms ease 300ms; }
+      .gate__mark {
+        position: relative;
+        display: grid;
+        justify-items: center;
+        gap: 26px;
+        transition:
+          transform 600ms var(--ease-wall) 250ms,
+          opacity 400ms ease 300ms;
+      }
       /* Đĩa CD TIX3 đang quay (images/icon.jpg) — đang phát "Trên Đỉnh Gió" */
       .disc {
         --d: min(72vw, 380px);
-        position: relative; width: var(--d); aspect-ratio: 1; border-radius: 50%;
-        filter: drop-shadow(0 22px 40px rgba(20, 20, 28, 0.32)) drop-shadow(0 2px 4px rgba(20, 20, 28, 0.25));
+        position: relative;
+        width: var(--d);
+        aspect-ratio: 1;
+        border-radius: 50%;
+        filter: drop-shadow(0 22px 40px rgba(20, 20, 28, 0.32))
+          drop-shadow(0 2px 4px rgba(20, 20, 28, 0.25));
         animation: disc-in 900ms var(--ease-wall) both;
         transition: transform 180ms ease;
       }
       .disc__cd {
-        display: block; width: 100%; height: 100%; border-radius: 50%;
-        /* bỏ nền trắng ở góc và lỗ giữa đĩa */
-        -webkit-mask: radial-gradient(circle closest-side, transparent 0 9.2%, #000 9.8% 98.6%, transparent 99.4%);
-                mask: radial-gradient(circle closest-side, transparent 0 9.2%, #000 9.8% 98.6%, transparent 99.4%);
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        /* ảnh icon-*.webp đã có sẵn nền trong suốt ở góc và lỗ giữa (cắt từ icon-new.jpg) */
         animation: spin 5s linear infinite;
       }
       /* Ánh sáng loang trên mặt đĩa: đứng yên trong khi đĩa quay */
       .disc__sheen {
-        position: absolute; inset: 0; border-radius: 50%; pointer-events: none; mix-blend-mode: soft-light;
-        background: conic-gradient(from 20deg, transparent 0 6%, rgba(255,255,255,0.55) 11%, transparent 17% 52%, rgba(255,255,255,0.4) 61%, transparent 67%);
-        -webkit-mask: radial-gradient(circle closest-side, transparent 0 9.8%, #000 10.4% 98.6%, transparent 99.4%);
-                mask: radial-gradient(circle closest-side, transparent 0 9.8%, #000 10.4% 98.6%, transparent 99.4%);
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        pointer-events: none;
+        mix-blend-mode: soft-light;
+        background: conic-gradient(
+          from 20deg,
+          transparent 0 6%,
+          rgba(255, 255, 255, 0.55) 11%,
+          transparent 17% 52%,
+          rgba(255, 255, 255, 0.4) 61%,
+          transparent 67%
+        );
+        -webkit-mask: radial-gradient(
+          circle closest-side,
+          transparent 0 13.6%,
+          #000 14.2% 99%,
+          transparent 99.6%
+        );
+        mask: radial-gradient(
+          circle closest-side,
+          transparent 0 13.6%,
+          #000 14.2% 99%,
+          transparent 99.6%
+        );
       }
-      @keyframes spin { to { transform: rotate(360deg); } }
-      @keyframes disc-in { from { transform: translateY(24px) scale(0.92); opacity: 0; } }
-      .gate:hover .disc { transform: translateY(-2px); }
-      .gate:active .disc { transform: scale(0.97); }
-      .gate:focus-visible .disc { outline: 2px solid var(--ink); outline-offset: 8px; }
-      .gate.is-open .disc__cd { animation-duration: 0.5s; }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes disc-in {
+        from {
+          transform: translateY(24px) scale(0.92);
+          opacity: 0;
+        }
+      }
+      .gate:hover .disc {
+        transform: translateY(-2px);
+      }
+      .gate:active .disc {
+        transform: scale(0.97);
+      }
+      .gate:focus-visible .disc {
+        outline: 2px solid var(--ink);
+        outline-offset: 8px;
+      }
+      .gate.is-open .disc__cd {
+        animation-duration: 0.5s;
+      }
       .gate__cta {
-        font: 500 15px/1 var(--font); letter-spacing: 0.04em;
-        opacity: 0; animation: cta 600ms ease 0.7s forwards, breathe 2.4s ease-in-out 1.3s infinite;
+        font: 500 15px/1 var(--font);
+        letter-spacing: 0.04em;
+        opacity: 0;
+        animation:
+          cta 600ms ease 0.7s forwards,
+          breathe 2.4s ease-in-out 1.3s infinite;
       }
-      @keyframes cta { to { opacity: 1; } }
-      @keyframes breathe { 50% { opacity: 0.45; } }
-      .gate:focus-visible { outline: none; }
+      @keyframes cta {
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes breathe {
+        50% {
+          opacity: 0.45;
+        }
+      }
+      .gate:focus-visible {
+        outline: none;
+      }
       /* Mở tường */
-      .gate.is-open { pointer-events: none; }
-      .gate.is-open .gate__crack { transform: scaleY(1); opacity: 0; }
-      .gate.is-open .gate__half--l { transform: translateX(-101%); }
-      .gate.is-open .gate__half--r { transform: translateX(101%); }
-      .gate.is-open .gate__mark { transform: scale(1.06); opacity: 0; }
-      .gate.is-gone { display: none; }
+      .gate.is-open {
+        pointer-events: none;
+      }
+      .gate.is-open .gate__crack {
+        transform: scaleY(1);
+        opacity: 0;
+      }
+      .gate.is-open .gate__half--l {
+        transform: translateX(-101%);
+      }
+      .gate.is-open .gate__half--r {
+        transform: translateX(101%);
+      }
+      .gate.is-open .gate__mark {
+        transform: scale(1.06);
+        opacity: 0;
+      }
+      .gate.is-gone {
+        display: none;
+      }
       @media (prefers-reduced-motion: reduce) {
-        .disc, .disc__cd { animation: none; }
-        .gate__cta { animation: none; opacity: 1; }
-        .gate__half, .gate__crack, .gate__mark { transition: opacity 300ms ease; }
-        .gate.is-open .gate__half--l, .gate.is-open .gate__half--r { transform: none; opacity: 0; }
-        html.is-entered .poster { animation: none; }
-        html.js .seatmap__img { filter: none; transform: none; transition: none; }
-        .sound, .sound:hover, .sound:active { transform: none; }
+        .disc,
+        .disc__cd {
+          animation: none;
+        }
+        .gate__cta {
+          animation: none;
+          opacity: 1;
+        }
+        .gate__half,
+        .gate__crack,
+        .gate__mark {
+          transition: opacity 300ms ease;
+        }
+        .gate.is-open .gate__half--l,
+        .gate.is-open .gate__half--r {
+          transform: none;
+          opacity: 0;
+        }
+        html.is-entered .poster {
+          animation: none;
+        }
+        html.js .seatmap__img {
+          filter: none;
+          transform: none;
+          transition: none;
+        }
+        .sound,
+        .sound:hover,
+        .sound:active {
+          transform: none;
+        }
       }
       @media (min-aspect-ratio: 9/14) {
-        .poster { width: auto; height: 100vh; height: 100svh; box-shadow: 0 0 60px rgba(20, 20, 30, 0.12); }
+        .poster {
+          width: auto;
+          height: 100vh;
+          height: 100svh;
+          box-shadow: 0 0 60px rgba(20, 20, 30, 0.12);
+        }
       }
     </style>
   </head>
   <body>
     <h1 hidden>TIX3 Live Tour 2026 — Bức Tường</h1>
     <div class="stage">
-    <img
-      class="poster"
-      src="images/poster-1200.webp"
-      srcset="images/poster-800.webp 800w, images/poster-1200.webp 1200w, images/poster-1800.webp 1800w"
-      sizes="(min-aspect-ratio: 9/14) calc(100svh * 1800 / 2800), 100vw"
-      width="1800" height="2800"
-      alt="Poster TIX3 Live Tour 2026 của ban nhạc Bức Tường: Hà Nội 12/12, TP. HCM 26/12 — One wall, many worlds"
-      fetchpriority="high"
-      decoding="async"
-    />
+      <img
+        class="poster"
+        src="images/poster-1200.webp"
+        srcset="
+          images/poster-800.webp   800w,
+          images/poster-1200.webp 1200w,
+          images/poster-1800.webp 1800w
+        "
+        sizes="(min-aspect-ratio: 9/14) calc(100svh * 1800 / 2800), 100vw"
+        width="1800"
+        height="2800"
+        alt="Poster TIX3 Live Tour 2026 của ban nhạc Bức Tường: Hà Nội 12/12, TP. HCM 26/12 — One wall, many worlds"
+        fetchpriority="high"
+        decoding="async"
+      />
     </div>
     <section class="seatmap" aria-labelledby="seatmap-title">
-      <h2 class="seatmap__title" id="seatmap-title">Sơ đồ khu vực đêm diễn Hà Nội, 12/12</h2>
       <img
         class="seatmap__img"
-        src="images/seatmap-hn-1020.webp"
-        srcset="images/seatmap-hn-680.webp 680w, images/seatmap-hn-1020.webp 1020w"
+        src="images/seatmap-hn-1280.webp"
+        srcset="
+          images/seatmap-hn-720.webp   720w,
+          images/seatmap-hn-1280.webp 1280w
+        "
         sizes="min(100vw, 960px)"
-        width="1020" height="800"
-        alt="Sơ đồ khu vực Hà Nội: sân khấu ở phía trước; khu đứng Tháng 3 sát sân khấu, tiếp theo là khu đứng Đi Về Phía Mùa Hè; khu ngồi Trên Đỉnh Gió phía sau, cạnh FOH; hai dãy ghế Tháng 12 chạy dọc hai bên."
+        width="1280"
+        height="1112"
+        alt="Sơ đồ chỗ ngồi TIX3 của Bức Tường: sân khấu ở phía trước; khu Tháng 3 sát sân khấu, tiếp theo là khu Đi Về Phía Mùa Hè; khu Trên Đỉnh Gió phía sau, cạnh FOH; hai dãy Tháng 12 chạy dọc hai bên."
         loading="lazy"
         decoding="async"
       />
     </section>
-    <button class="gate" id="enter" type="button" aria-label="Chạm để vào trang và bật nhạc">
+    <button
+      class="gate"
+      id="enter"
+      type="button"
+      aria-label="Chạm để vào trang và bật nhạc"
+    >
       <span class="gate__veil" aria-hidden="true"></span>
       <span class="gate__half gate__half--l" aria-hidden="true"></span>
       <span class="gate__half gate__half--r" aria-hidden="true"></span>
       <span class="gate__crack" aria-hidden="true"></span>
       <span class="gate__mark">
         <span class="disc">
-          <img class="disc__cd" src="images/icon-800.webp" srcset="images/icon-400.webp 400w, images/icon-800.webp 800w" sizes="min(72vw, 380px)" width="800" height="800" alt="" />
+          <img
+            class="disc__cd"
+            src="images/icon-800.webp"
+            srcset="images/icon-400.webp 400w, images/icon-800.webp 800w"
+            sizes="min(72vw, 380px)"
+            width="800"
+            height="800"
+            alt=""
+          />
           <span class="disc__sheen"></span>
         </span>
         <span class="gate__cta">Chạm để vào</span>
       </span>
     </button>
     <!-- Nhạc nền: Trên Đỉnh Gió — Trần Tuấn Hùng (3:40 → hết), tự phát khi vào trang -->
-    <audio id="bgm" src="audio/tren-dinh-gio.m4a" preload="auto" autoplay loop></audio>
-    <button class="sound" id="sound" type="button" aria-pressed="true" aria-label="Bật/tắt nhạc">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path class="on" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="off" d="M17 9l5 6M22 9l-5 6"/></svg>
+    <audio
+      id="bgm"
+      src="audio/tren-dinh-gio.m4a"
+      preload="auto"
+      autoplay
+      loop
+    ></audio>
+    <button
+      class="sound"
+      id="sound"
+      type="button"
+      aria-pressed="true"
+      aria-label="Bật/tắt nhạc"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 9v6h4l5 4V5L8 9H4z" />
+        <path class="on" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" />
+        <path class="off" d="M17 9l5 6M22 9l-5 6" />
+      </svg>
       <span class="on">Tắt nhạc</span><span class="off">Bật nhạc</span>
     </button>
     <script>
       (() => {
-        const a = document.getElementById('bgm'), b = document.getElementById('sound'), gate = document.getElementById('enter');
+        const a = document.getElementById("bgm"),
+          b = document.getElementById("sound"),
+          gate = document.getElementById("enter");
         a.volume = 0.7;
-        const show = () => b.setAttribute('aria-pressed', String(!a.paused));
-        a.addEventListener('play', show); a.addEventListener('pause', show);
-        const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const show = () => b.setAttribute("aria-pressed", String(!a.paused));
+        a.addEventListener("play", show);
+        a.addEventListener("pause", show);
+        const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
         const root = document.documentElement;
         const enter = () => {
-          if (gate.classList.contains('is-open')) return;
+          if (gate.classList.contains("is-open")) return;
           a.play().catch(() => {});
-          gate.classList.add('is-open');
-          root.classList.add('is-entered');
-          setTimeout(() => gate.classList.add('is-gone'), reduce ? 350 : 1550);
+          gate.classList.add("is-open");
+          root.classList.add("is-entered");
+          setTimeout(() => gate.classList.add("is-gone"), reduce ? 350 : 1550);
         };
         // Nếu trình duyệt cho tự phát (ít gặp) thì bỏ qua màn chào; không thì chờ khách chạm
-        a.play().then(() => { gate.classList.add('is-gone'); root.classList.add('is-entered'); }).catch(() => {});
+        a.play()
+          .then(() => {
+            gate.classList.add("is-gone");
+            root.classList.add("is-entered");
+          })
+          .catch(() => {});
         // Sơ đồ hiện màu một lần khi 35% của nó vào màn hình
-        const map = document.querySelector('.seatmap');
-        if (!('IntersectionObserver' in window)) {
-          map.classList.add('is-in');
+        const map = document.querySelector(".seatmap");
+        if (!("IntersectionObserver" in window)) {
+          map.classList.add("is-in");
         } else {
-          const io = new IntersectionObserver((entries) => {
-            if (!entries.some((e) => e.isIntersecting)) return;
-            map.classList.add('is-in');
-            io.disconnect();
-          }, { threshold: 0.35 });
+          const io = new IntersectionObserver(
+            (entries) => {
+              if (!entries.some((e) => e.isIntersecting)) return;
+              map.classList.add("is-in");
+              io.disconnect();
+            },
+            { threshold: 0.35 },
+          );
           io.observe(map);
         }
-        gate.addEventListener('click', enter);
+        gate.addEventListener("click", enter);
         show();
-        b.addEventListener('click', () => { a.paused ? a.play().catch(() => {}) : a.pause(); });
-        try { localStorage.removeItem('tix3-muted'); } catch (e) {}
+        b.addEventListener("click", () => {
+          a.paused ? a.play().catch(() => {}) : a.pause();
+        });
+        try {
+          localStorage.removeItem("tix3-muted");
+        } catch (e) {}
       })();
     </script>
   </body>
