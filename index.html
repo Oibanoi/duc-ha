@@ -31,6 +31,22 @@
       .sound .off { display: none; }
       .sound[aria-pressed="false"] .on { display: none; }
       .sound[aria-pressed="false"] .off { display: inline; }
+      /* Màn chào: 1 lần chạm để bật nhạc (trình duyệt không cho tự phát có tiếng) */
+      .enter {
+        position: fixed; inset: 0; z-index: 3; display: grid; place-items: center; padding: 24px;
+        background: rgba(232, 232, 237, 0.35); -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);
+        border: 0; cursor: pointer; transition: opacity 600ms ease, visibility 600ms;
+      }
+      .enter.is-gone { opacity: 0; visibility: hidden; }
+      .enter__btn {
+        display: inline-flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 28px;
+        border-radius: 999px; background: #14141c; color: #fff;
+        font: 600 17px/1 system-ui, -apple-system, "Segoe UI", sans-serif; letter-spacing: 0.02em;
+        box-shadow: 0 10px 30px rgba(20, 20, 28, 0.25);
+      }
+      .enter__btn svg { width: 20px; height: 20px; fill: currentColor; }
+      .enter:focus-visible .enter__btn { outline: 2px solid #14141c; outline-offset: 4px; }
+      @media (prefers-reduced-motion: reduce) { .enter { transition: none; } }
       @media (min-aspect-ratio: 9/14) {
         .poster { width: auto; height: 100vh; height: 100svh; box-shadow: 0 0 60px rgba(20, 20, 30, 0.12); }
       }
@@ -48,6 +64,9 @@
       fetchpriority="high"
       decoding="async"
     />
+    <button class="enter" id="enter" type="button" aria-label="Vào trang và bật nhạc">
+      <span class="enter__btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>Chạm để vào</span>
+    </button>
     <!-- Nhạc nền: Vòng Xoay — Bức Tường (3:09 → hết), tự phát khi vào trang -->
     <audio id="bgm" src="audio/vong-xoay.m4a" preload="auto" autoplay loop></audio>
     <button class="sound" id="sound" type="button" aria-pressed="true" aria-label="Bật/tắt nhạc">
@@ -56,30 +75,17 @@
     </button>
     <script>
       (() => {
-        const a = document.getElementById('bgm'), b = document.getElementById('sound');
-        const KEY = 'tix3-muted';
-        let muted = false;
-        try { muted = localStorage.getItem(KEY) === '1'; } catch (e) {}
+        const a = document.getElementById('bgm'), b = document.getElementById('sound'), gate = document.getElementById('enter');
         a.volume = 0.7;
         const show = () => b.setAttribute('aria-pressed', String(!a.paused));
         a.addEventListener('play', show); a.addEventListener('pause', show);
-        // Trình duyệt thường chặn tự phát có tiếng: thử phát ngay, nếu bị chặn thì phát ở lần chạm/bấm đầu tiên
-        const kick = e => {
-          if (e && e.target && e.target.closest && e.target.closest('#sound')) return; // nút nhạc tự xử lý
-          off(); if (!muted) a.play().catch(() => {});
-        };
-        const events = ['pointerdown', 'touchend', 'keydown', 'click'];
-        const on = () => events.forEach(ev => addEventListener(ev, kick, { passive: true }));
-        const off = () => events.forEach(ev => removeEventListener(ev, kick));
-        if (muted) { a.pause(); a.removeAttribute('autoplay'); }
-        else a.play().catch(on);
+        const enter = () => { gate.classList.add('is-gone'); a.play().catch(() => {}); };
+        // Nếu trình duyệt cho tự phát (ít gặp) thì bỏ qua màn chào; không thì chờ khách chạm
+        a.play().then(() => gate.classList.add('is-gone')).catch(() => {});
+        gate.addEventListener('click', enter);
         show();
-        b.addEventListener('click', e => {
-          e.stopPropagation(); off();
-          if (a.paused) { muted = false; a.play().catch(() => {}); }
-          else { muted = true; a.pause(); }
-          try { muted ? localStorage.setItem(KEY, '1') : localStorage.removeItem(KEY); } catch (err) {}
-        });
+        b.addEventListener('click', () => { a.paused ? a.play().catch(() => {}) : a.pause(); });
+        try { localStorage.removeItem('tix3-muted'); } catch (e) {}
       })();
     </script>
   </body>
