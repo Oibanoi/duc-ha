@@ -367,6 +367,11 @@
   </head>
   <body>
     <h1 hidden>TIX3 Live Tour 2026 — Bức Tường</h1>
+    <!-- Sau khi vào trang: báo còn sổ lời nhắn bên dưới poster; ẩn khi người xem đã cuộn xuống -->
+    <a class="scroll-cue" id="scrollCue" href="#guestbook">
+      Gửi lời nhắn cho Bức Tường
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+    </a>
     <div class="stage">
       <img
         class="poster"
@@ -387,9 +392,13 @@
     <section class="wishes" id="guestbook" aria-labelledby="wishes-title">
       <h2 class="wishes__title" id="wishes-title">
         <span class="wishes__line">Hãy để lại một lời nhắn,</span>
-        <span class="wishes__line">một kỷ niệm của bạn với Bức Tường,</span>
+        <span class="wishes__line">một kỷ niệm của&nbsp;bạn với Bức Tường,</span>
         <span class="wishes__sub">để chúng ta cùng tạo nên hành trình đặc biệt của TIX3 LIVE TOUR 2026</span>
       </h2>
+      <a class="wishes__cta" href="#wishForm">
+        Viết lời nhắn của bạn
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" /></svg>
+      </a>
 
       <div class="wishes__stage" id="wishStage">
         <p class="wishes__empty" id="wishEmpty">Chưa có lời nhắn nào. Hãy là người đầu tiên!</p>

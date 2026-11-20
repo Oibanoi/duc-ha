@@ -158,6 +158,36 @@
     visible = true;
   }
 
+  // Cuộn mượt (trừ khi người xem chọn giảm chuyển động)
+  const scrollBehavior = reduceMotion ? "auto" : "smooth";
+
+  // Gợi ý "Gửi lời nhắn cho Bức Tường" ở cuối màn hình poster: ẩn khi poster đã cuộn khỏi phần lớn màn hình
+  const cue = document.getElementById("scrollCue");
+  const posterStage = document.querySelector(".stage");
+  const section = document.getElementById("guestbook");
+  if (cue && posterStage && section) {
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(([e]) => cue.classList.toggle("is-hidden", e.intersectionRatio < 0.6), {
+        threshold: [0, 0.6, 1],
+      }).observe(posterStage);
+    }
+    cue.addEventListener("click", (e) => {
+      e.preventDefault();
+      cue.classList.add("is-hidden");
+      section.scrollIntoView({ behavior: scrollBehavior, block: "start" });
+    });
+  }
+
+  // "Viết lời nhắn của bạn": cuộn xuống ô nhập rồi đặt con trỏ vào ô tên
+  const cta = document.querySelector(".wishes__cta");
+  if (cta) {
+    cta.addEventListener("click", (e) => {
+      e.preventDefault();
+      form.scrollIntoView({ behavior: scrollBehavior, block: "center" });
+      nameEl.focus({ preventScroll: true });
+    });
+  }
+
   msgEl.addEventListener("input", () => {
     left.textContent = String(MAX_MSG - msgEl.value.length);
   });

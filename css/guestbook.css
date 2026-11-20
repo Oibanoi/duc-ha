@@ -46,6 +46,103 @@
   color: var(--color-muted);
 }
 
+/* Nút "Viết lời nhắn của bạn": chỉ xuống ô nhập bên dưới khung lời nhắn */
+.wishes__cta {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin: -16px auto 32px;
+  padding: 0 20px;
+  border: 1px solid rgba(31, 94, 122, 0.35);
+  border-radius: 999px;
+  color: var(--color-accent);
+  font: 600 15px/1 var(--font);
+  text-decoration: none;
+  transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+.wishes__cta svg,
+.scroll-cue svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@media (hover: hover) and (pointer: fine) {
+  .wishes__cta:hover {
+    background: rgba(31, 94, 122, 0.08);
+    border-color: var(--color-accent);
+    transform: translateY(-1px);
+  }
+}
+.wishes__cta:active {
+  transform: translateY(1px) scale(0.985);
+}
+.wishes__cta:focus-visible,
+.scroll-cue:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* Gợi ý cuộn xuống: chỉ hiện sau khi vào trang, khi poster còn chiếm màn hình */
+.scroll-cue {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 18px 0 20px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 6px 20px rgba(20, 20, 28, 0.16);
+  color: #231f20;
+  font: 600 14px/1 var(--font);
+  text-decoration: none;
+  white-space: nowrap;
+  --cue-x: -50%;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(var(--cue-x), 12px);
+  transition: opacity 300ms ease, transform 300ms ease, visibility 0s linear 300ms;
+}
+html.is-entered .scroll-cue:not(.is-hidden) {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(var(--cue-x), 0);
+  transition-delay: 1200ms, 1200ms, 0s; /* chờ tường tách xong mới hiện */
+}
+html.is-entered .scroll-cue.is-hidden {
+  transition-delay: 0s;
+}
+.scroll-cue svg {
+  animation: cue-bob 1.8s ease-in-out infinite;
+}
+@keyframes cue-bob {
+  50% { transform: translateY(3px); }
+}
+/* Màn hình ngang rộng: poster chừa khoảng trống hai bên → đặt ở góc trái dưới, không che chữ trên poster */
+@media (min-aspect-ratio: 3/2) {
+  .scroll-cue {
+    --cue-x: 0;
+    left: 24px;
+  }
+}
+/* Điện thoại: đặt cao hơn để không đè nút bật/tắt nhạc ở góc phải */
+@media (max-width: 600px) {
+  .scroll-cue {
+    bottom: calc(76px + env(safe-area-inset-bottom));
+  }
+}
+
 /* Khung lời nhắn: thiệp nhỏ bay lên, mờ dần ở mép trên và dưới */
 .wishes__stage {
   position: relative;
@@ -278,6 +375,10 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .wish { animation: none; }
+  .scroll-cue svg { animation: none; }
+  .wishes__cta,
+  .wishes__cta:hover,
+  .wishes__cta:active { transform: none; }
   .wishes__send,
   .wishes__send:hover,
   .wishes__send:active { transform: none; }
