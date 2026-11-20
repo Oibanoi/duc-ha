@@ -19,6 +19,18 @@
       }
       .poster { display: block; width: 100%; height: auto; }
       /* Màn hình rộng hơn tỉ lệ poster (9:14): poster cao vừa màn hình, canh giữa */
+      .sound {
+        position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 2;
+        display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px;
+        border: 0; border-radius: 999px; cursor: pointer;
+        font: 500 14px/1 system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff;
+        background: rgba(20, 20, 28, 0.72); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+      }
+      .sound:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+      .sound svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; }
+      .sound .off { display: none; }
+      .sound[aria-pressed="false"] .on { display: none; }
+      .sound[aria-pressed="false"] .off { display: inline; }
       @media (min-aspect-ratio: 9/14) {
         .poster { width: auto; height: 100vh; height: 100svh; box-shadow: 0 0 60px rgba(20, 20, 30, 0.12); }
       }
@@ -36,5 +48,39 @@
       fetchpriority="high"
       decoding="async"
     />
+    <!-- Nhạc nền: Vòng Xoay — Bức Tường (3:09 → hết), tự phát khi vào trang -->
+    <audio id="bgm" src="audio/vong-xoay.m4a" preload="auto" autoplay loop></audio>
+    <button class="sound" id="sound" type="button" aria-pressed="true" aria-label="Bật/tắt nhạc">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path class="on" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="off" d="M17 9l5 6M22 9l-5 6"/></svg>
+      <span class="on">Tắt nhạc</span><span class="off">Bật nhạc</span>
+    </button>
+    <script>
+      (() => {
+        const a = document.getElementById('bgm'), b = document.getElementById('sound');
+        const KEY = 'tix3-muted';
+        let muted = false;
+        try { muted = localStorage.getItem(KEY) === '1'; } catch (e) {}
+        a.volume = 0.7;
+        const show = () => b.setAttribute('aria-pressed', String(!a.paused));
+        a.addEventListener('play', show); a.addEventListener('pause', show);
+        // Trình duyệt thường chặn tự phát có tiếng: thử phát ngay, nếu bị chặn thì phát ở lần chạm/bấm đầu tiên
+        const kick = e => {
+          if (e && e.target && e.target.closest && e.target.closest('#sound')) return; // nút nhạc tự xử lý
+          off(); if (!muted) a.play().catch(() => {});
+        };
+        const events = ['pointerdown', 'touchend', 'keydown', 'click'];
+        const on = () => events.forEach(ev => addEventListener(ev, kick, { passive: true }));
+        const off = () => events.forEach(ev => removeEventListener(ev, kick));
+        if (muted) { a.pause(); a.removeAttribute('autoplay'); }
+        else a.play().catch(on);
+        show();
+        b.addEventListener('click', e => {
+          e.stopPropagation(); off();
+          if (a.paused) { muted = false; a.play().catch(() => {}); }
+          else { muted = true; a.pause(); }
+          try { muted ? localStorage.setItem(KEY, '1') : localStorage.removeItem(KEY); } catch (err) {}
+        });
+      })();
+    </script>
   </body>
 </html>
