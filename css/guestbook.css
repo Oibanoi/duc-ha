@@ -1,0 +1,284 @@
+/* Sổ lời nhắn TIX3 — cùng bố cục với phần "Lời chúc" của thiệp cưới (nhánh doanh-luyen):
+   lời mời → khung lời nhắn bay lên → ô gửi. Màu theo poster TIX3. */
+.wishes {
+  --color-background: #f4f4f6;
+  --color-surface: #e2e2e7;
+  --color-foreground: #231f20;
+  --color-muted: #6b6670;
+  --color-accent: #1f5e7a;
+  --color-line: rgba(35, 31, 32, 0.16);
+  --margin: 16px;
+  padding: 96px 0 calc(120px + env(safe-area-inset-bottom));
+  color: var(--color-foreground);
+  font: 400 16px/1.55 var(--font);
+}
+.wishes *,
+.wishes *::before,
+.wishes *::after {
+  box-sizing: border-box;
+}
+@media (min-width: 768px) {
+  .wishes { --margin: 40px; padding-top: 128px; }
+}
+@media (min-width: 1100px) {
+  .wishes { --margin: clamp(64px, 6vw, 120px); }
+}
+/* Lời mời: 2 vế đầu (tách ở dấu phẩy) là tiêu đề lớn, mỗi vế 1 dòng; vế cuối là câu dẫn nhỏ hơn */
+.wishes__title {
+  margin: 0 auto 40px;
+  padding: 0 var(--margin);
+  text-align: center;
+  font: 600 clamp(24px, 4.2vw, 40px) / 1.3 var(--font);
+  letter-spacing: -0.015em;
+}
+.wishes__line,
+.wishes__sub {
+  display: block;
+  text-wrap: balance;
+}
+.wishes__sub {
+  max-width: 34ch;
+  margin: 14px auto 0;
+  font-size: clamp(17px, 2vw, 22px);
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: var(--color-muted);
+}
+
+/* Khung lời nhắn: thiệp nhỏ bay lên, mờ dần ở mép trên và dưới */
+.wishes__stage {
+  position: relative;
+  overflow: hidden;
+  height: min(72vh, 620px);
+  margin: 0 var(--margin);
+  background: linear-gradient(to bottom, var(--color-background), var(--color-surface));
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+          mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+}
+@media (min-width: 1100px) {
+  .wishes__stage { max-width: 1320px; margin: 0 auto; }
+}
+.wishes__empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: var(--margin);
+  text-align: center;
+  color: var(--color-muted);
+}
+.wishes__empty[hidden] {
+  display: none;
+}
+.wish {
+  --cw: min(260px, 44vw);
+  position: absolute;
+  left: clamp(calc(var(--cw) / 2 + 24px), var(--x), calc(100% - var(--cw) / 2 - 24px));
+  top: 100%;
+  margin: 0;
+  width: var(--cw);
+  display: grid;
+  gap: 6px;
+  animation: wishRise var(--dur, 16s) linear forwards;
+  will-change: transform, opacity;
+}
+/* Người gửi: avatar Bức Tường cạnh tên, ở trên lời nhắn */
+.wish figcaption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-foreground);
+}
+.wish figcaption span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wish__avatar {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9);
+}
+/* Lời nhắn: bong bóng trong mờ, góc trên trái nhọn chỉ về người gửi */
+.wish blockquote {
+  margin: 0 0 0 20px;
+  padding: 10px 14px;
+  border-radius: 4px 18px 18px 18px;
+  background: rgba(255, 255, 255, 0.66);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 1px 2px rgba(35, 31, 32, 0.05);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-foreground);
+  overflow-wrap: anywhere;
+}
+.wish.is-mine blockquote {
+  background: rgba(31, 94, 122, 0.12);
+  border-color: rgba(31, 94, 122, 0.35);
+}
+@keyframes wishRise {
+  0%   { opacity: 0; transform: translate(-50%, 0) rotate(var(--tilt)); }
+  8%   { opacity: 1; }
+  50%  { transform: translate(calc(-50% + var(--sway)), calc(var(--h) * -0.55)) rotate(calc(var(--tilt) * -1)); }
+  92%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, calc(var(--h) * -1 - 100%)) rotate(var(--tilt)); }
+}
+/* Giảm chuyển động: lưới tĩnh các lời nhắn mới nhất */
+.wishes__stage.is-static {
+  height: auto;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  padding: 24px 0;
+  -webkit-mask-image: none;
+          mask-image: none;
+  background: none;
+}
+.wishes__stage.is-static .wish {
+  position: static;
+  width: auto;
+  animation: none;
+}
+.wishes__stage.is-static .wishes__empty {
+  position: static;
+}
+
+/* Ô gửi lời nhắn */
+.wishes__form {
+  display: grid;
+  gap: 16px;
+  max-width: 560px;
+  margin: 48px auto 0;
+  padding: 0 var(--margin);
+}
+.wishes__form fieldset {
+  display: contents;
+}
+.wishes__field {
+  position: relative;
+  display: grid;
+  gap: 8px;
+}
+.wishes__field span {
+  font-size: 14px;
+  color: var(--color-muted);
+}
+.wishes__field input,
+.wishes__field textarea {
+  width: 100%;
+  padding: 13px 16px;
+  font: inherit;
+  font-size: 16px; /* iOS không tự phóng to khi gõ */
+  color: var(--color-foreground);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(35, 31, 32, 0.04);
+  resize: vertical;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+.wishes__field input::placeholder,
+.wishes__field textarea::placeholder {
+  color: #9a96a0;
+}
+@media (hover: hover) and (pointer: fine) {
+  .wishes__field input:hover,
+  .wishes__field textarea:hover {
+    border-color: rgba(35, 31, 32, 0.28);
+  }
+}
+/* Viền và vầng sáng mềm khi đang gõ, thay cho khung outline vuông */
+.wishes__field input:focus,
+.wishes__field textarea:focus {
+  outline: none;
+  background: #fff;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 4px rgba(31, 94, 122, 0.16);
+}
+.wishes__field textarea {
+  min-height: 112px;
+  padding-bottom: 28px; /* chừa chỗ cho bộ đếm ký tự */
+}
+.wishes__left {
+  position: absolute;
+  right: 14px;
+  bottom: 10px;
+  font-size: 12px;
+  color: var(--color-muted);
+  pointer-events: none;
+}
+.wishes__hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.wishes__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+.wishes__status {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+.wishes__send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 28px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-accent);
+  color: #fff;
+  font: 600 15px/1 var(--font);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(31, 94, 122, 0.28);
+  transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease, opacity 160ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .wishes__send:hover:not(:disabled) {
+    transform: translateY(-1px);
+    background: #19506a;
+    box-shadow: 0 8px 20px rgba(31, 94, 122, 0.32);
+  }
+}
+.wishes__send:active:not(:disabled) {
+  transform: translateY(1px) scale(0.985);
+  box-shadow: 0 2px 8px rgba(31, 94, 122, 0.24);
+  transition-duration: 90ms;
+}
+.wishes__send:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(31, 94, 122, 0.28);
+}
+.wishes__send:disabled {
+  opacity: 0.45;
+  box-shadow: none;
+  cursor: default;
+}
+@media (max-width: 480px) {
+  .wishes__send {
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wish { animation: none; }
+  .wishes__send,
+  .wishes__send:hover,
+  .wishes__send:active { transform: none; }
+}

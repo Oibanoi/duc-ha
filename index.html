@@ -29,8 +29,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&display=swap"
     />
+    <link rel="stylesheet" href="css/guestbook.css" />
     <script>
       document.documentElement.classList.add("js");
     </script>
@@ -383,6 +384,36 @@
         decoding="async"
       />
     </div>
+    <section class="wishes" id="guestbook" aria-labelledby="wishes-title">
+      <h2 class="wishes__title" id="wishes-title">
+        <span class="wishes__line">Hãy để lại một lời nhắn,</span>
+        <span class="wishes__line">một kỷ niệm của bạn với Bức Tường,</span>
+        <span class="wishes__sub">để chúng ta cùng tạo nên hành trình đặc biệt của TIX3 LIVE TOUR 2026</span>
+      </h2>
+
+      <div class="wishes__stage" id="wishStage">
+        <p class="wishes__empty" id="wishEmpty">Chưa có lời nhắn nào. Hãy là người đầu tiên!</p>
+      </div>
+
+      <form class="wishes__form" id="wishForm" novalidate>
+        <label class="wishes__field">
+          <span>Tên của bạn</span>
+          <input name="name" type="text" maxlength="40" autocomplete="name" required />
+        </label>
+        <label class="wishes__field">
+          <span>Lời nhắn</span>
+          <textarea name="msg" rows="3" maxlength="300" required></textarea>
+          <small class="wishes__left" id="wishLeft" aria-hidden="true">300</small>
+        </label>
+        <!-- Bẫy bot: người dùng không thấy ô này -->
+        <input class="wishes__hp" name="hp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <div class="wishes__actions">
+          <button class="wishes__send" type="submit" id="wishSend">Gửi lời nhắn</button>
+          <p class="wishes__status" id="wishStatus" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </section>
+    <script src="js/guestbook.js" defer></script>
     <button
       class="gate"
       id="enter"
