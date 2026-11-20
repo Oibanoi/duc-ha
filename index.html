@@ -8,38 +8,71 @@
     <meta name="theme-color" content="#E8E8ED" />
     <meta property="og:title" content="TIX3 Live Tour 2026 — Bức Tường" />
     <meta property="og:description" content="Hà Nội 12/12 · TP. HCM 26/12" />
-    <meta property="og:image" content="images/poster-og.jpg" />
+    <meta property="og:image" content="https://tix3-live-tour.vercel.app/images/poster-og.jpg" />
+    <meta property="og:url" content="https://tix3-live-tour.vercel.app/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="vi_VN" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="https://tix3-live-tour.vercel.app/" />
+    <link rel="icon" type="image/webp" href="images/icon-400.webp" />
+    <link rel="apple-touch-icon" href="images/icon-400.webp" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600&display=swap" />
+    <script>document.documentElement.classList.add('js')</script>
     <link rel="preload" as="image" imagesrcset="images/poster-800.webp 800w, images/poster-1200.webp 1200w, images/poster-1800.webp 1800w" imagesizes="(min-aspect-ratio: 9/14) calc(100svh * 1800 / 2800), 100vw" fetchpriority="high" />
     <style>
       html, body { margin: 0; }
       body { background: linear-gradient(#ffffff, #dcdce1); }
-      .stage { min-height: 100svh; display: grid; place-items: center; }
+      :root {
+        --font: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+        --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      /* overflow: clip giữ poster trong khung khi nó "đáp xuống" (scale 1.05 → 1), không sinh thanh cuộn ngang */
+      .stage { min-height: 100svh; display: grid; place-items: center; overflow: clip; }
       .poster { display: block; width: 100%; height: auto; }
-      /* Sơ đồ khu vực: chỉ phần sơ đồ cắt từ ảnh Seat Map HN; mép giấy mờ dần để hoà vào nền trang */
+      /* Vào trang: khi tường tách đôi, poster đáp nhẹ từ 1.05 về 1 (một lần, 1.1 s) */
+      html.is-entered .poster { animation: settle 1100ms var(--ease-enter) 300ms both; }
+      @keyframes settle { from { transform: scale(1.05); } }
+      /* Sơ đồ khu vực: đúng một màn hình; tiêu đề ở trên, sơ đồ lớn nhất có thể mà vẫn vừa màn hình */
       .seatmap {
-        display: grid; justify-items: center; gap: 8px;
-        padding: 56px 0 calc(96px + env(safe-area-inset-bottom));
+        box-sizing: border-box; min-height: 100svh;
+        display: grid; justify-items: center; align-content: center; gap: clamp(16px, 3vh, 32px);
+        padding: 64px 0 calc(88px + env(safe-area-inset-bottom));
       }
       .seatmap__title {
         margin: 0; padding: 0 16px; text-align: center; text-wrap: balance;
-        font: 600 clamp(19px, 2.2vw, 24px)/1.3 system-ui, -apple-system, "Segoe UI", sans-serif;
+        font: 600 clamp(20px, 2.4vw, 28px)/1.25 var(--font); letter-spacing: -0.01em;
         color: #231F20;
       }
       .seatmap__img {
-        display: block; width: min(100%, 960px); height: auto;
+        display: block; height: auto;
+        width: min(100%, 960px, calc((100svh - 200px) * 1020 / 800));
         -webkit-mask: linear-gradient(90deg, transparent, #000 6% 94%, transparent), linear-gradient(transparent, #000 6% 94%, transparent);
         -webkit-mask-composite: source-in;
                 mask: linear-gradient(90deg, transparent, #000 6% 94%, transparent), linear-gradient(transparent, #000 6% 94%, transparent);
                 mask-composite: intersect;
       }
+      /* Khoảnh khắc duy nhất khi cuộn: sơ đồ "hiện màu" như ảnh in ra, một lần khi vào tầm nhìn.
+         Chỉ áp khi có JS; không JS hoặc giảm chuyển động thì sơ đồ hiện đủ màu ngay */
+      html.js .seatmap__img {
+        filter: grayscale(1) contrast(0.9) brightness(1.06); transform: scale(0.985);
+        transition: filter 1400ms var(--ease-enter), transform 1400ms var(--ease-enter);
+      }
+      html.js .seatmap.is-in .seatmap__img { filter: none; transform: none; }
       /* Màn hình rộng hơn tỉ lệ poster (9:14): poster cao vừa màn hình, canh giữa */
       .sound {
         position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 2;
         display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px;
         border: 0; border-radius: 999px; cursor: pointer;
-        font: 500 14px/1 system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff;
+        font: 500 14px/1 var(--font); color: #fff;
         background: rgba(20, 20, 28, 0.72); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+        transition: transform 120ms ease-out, background-color 120ms ease-out;
       }
+      @media (hover: hover) and (pointer: fine) {
+        .sound:hover { transform: translateY(-1px); background-color: rgba(20, 20, 28, 0.86); transition-duration: 150ms; }
+      }
+      .sound:active { transform: translateY(1px) scale(0.985); transition-duration: 90ms; }
       .sound:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
       .sound svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; }
       .sound .off { display: none; }
@@ -108,7 +141,7 @@
       .gate:focus-visible .disc { outline: 2px solid var(--ink); outline-offset: 8px; }
       .gate.is-open .disc__cd { animation-duration: 0.5s; }
       .gate__cta {
-        font: 500 15px/1 system-ui, -apple-system, "Segoe UI", sans-serif; letter-spacing: 0.04em;
+        font: 500 15px/1 var(--font); letter-spacing: 0.04em;
         opacity: 0; animation: cta 600ms ease 0.7s forwards, breathe 2.4s ease-in-out 1.3s infinite;
       }
       @keyframes cta { to { opacity: 1; } }
@@ -126,6 +159,9 @@
         .gate__cta { animation: none; opacity: 1; }
         .gate__half, .gate__crack, .gate__mark { transition: opacity 300ms ease; }
         .gate.is-open .gate__half--l, .gate.is-open .gate__half--r { transform: none; opacity: 0; }
+        html.is-entered .poster { animation: none; }
+        html.js .seatmap__img { filter: none; transform: none; transition: none; }
+        .sound, .sound:hover, .sound:active { transform: none; }
       }
       @media (min-aspect-ratio: 9/14) {
         .poster { width: auto; height: 100vh; height: 100svh; box-shadow: 0 0 60px rgba(20, 20, 30, 0.12); }
@@ -185,14 +221,28 @@
         const show = () => b.setAttribute('aria-pressed', String(!a.paused));
         a.addEventListener('play', show); a.addEventListener('pause', show);
         const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const root = document.documentElement;
         const enter = () => {
           if (gate.classList.contains('is-open')) return;
           a.play().catch(() => {});
           gate.classList.add('is-open');
+          root.classList.add('is-entered');
           setTimeout(() => gate.classList.add('is-gone'), reduce ? 350 : 1550);
         };
         // Nếu trình duyệt cho tự phát (ít gặp) thì bỏ qua màn chào; không thì chờ khách chạm
-        a.play().then(() => gate.classList.add('is-gone')).catch(() => {});
+        a.play().then(() => { gate.classList.add('is-gone'); root.classList.add('is-entered'); }).catch(() => {});
+        // Sơ đồ hiện màu một lần khi 35% của nó vào màn hình
+        const map = document.querySelector('.seatmap');
+        if (!('IntersectionObserver' in window)) {
+          map.classList.add('is-in');
+        } else {
+          const io = new IntersectionObserver((entries) => {
+            if (!entries.some((e) => e.isIntersecting)) return;
+            map.classList.add('is-in');
+            io.disconnect();
+          }, { threshold: 0.35 });
+          io.observe(map);
+        }
         gate.addEventListener('click', enter);
         show();
         b.addEventListener('click', () => { a.paused ? a.play().catch(() => {}) : a.pause(); });
