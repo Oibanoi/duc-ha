@@ -75,51 +75,6 @@
           transform: scale(1.05);
         }
       }
-      /* Sơ đồ khu vực: đúng một màn hình; tiêu đề ở trên, sơ đồ lớn nhất có thể mà vẫn vừa màn hình */
-      .seatmap {
-        box-sizing: border-box;
-        min-height: 100svh;
-        display: grid;
-        justify-items: center;
-        align-content: center;
-        gap: clamp(16px, 3vh, 32px);
-        padding: 64px 0 calc(88px + env(safe-area-inset-bottom));
-      }
-      .seatmap__title {
-        margin: 0;
-        padding: 0 16px;
-        text-align: center;
-        text-wrap: balance;
-        font: 600 clamp(20px, 2.4vw, 28px)/1.25 var(--font);
-        letter-spacing: -0.01em;
-        color: #231f20;
-      }
-      .seatmap__img {
-        display: block;
-        height: auto;
-        width: min(100%, 960px, calc((100svh - 200px) * 1280 / 1112));
-        -webkit-mask:
-          linear-gradient(90deg, transparent, #000 6% 94%, transparent),
-          linear-gradient(transparent, #000 6% 94%, transparent);
-        -webkit-mask-composite: source-in;
-        mask:
-          linear-gradient(90deg, transparent, #000 6% 94%, transparent),
-          linear-gradient(transparent, #000 6% 94%, transparent);
-        mask-composite: intersect;
-      }
-      /* Khoảnh khắc duy nhất khi cuộn: sơ đồ "hiện màu" như ảnh in ra, một lần khi vào tầm nhìn.
-         Chỉ áp khi có JS; không JS hoặc giảm chuyển động thì sơ đồ hiện đủ màu ngay */
-      html.js .seatmap__img {
-        filter: grayscale(1) contrast(0.9) brightness(1.06);
-        transform: scale(0.985);
-        transition:
-          filter 1400ms var(--ease-enter),
-          transform 1400ms var(--ease-enter);
-      }
-      html.js .seatmap.is-in .seatmap__img {
-        filter: none;
-        transform: none;
-      }
       /* Màn hình rộng hơn tỉ lệ poster (9:14): poster cao vừa màn hình, canh giữa */
       .sound {
         position: fixed;
@@ -393,11 +348,6 @@
         html.is-entered .poster {
           animation: none;
         }
-        html.js .seatmap__img {
-          filter: none;
-          transform: none;
-          transition: none;
-        }
         .sound,
         .sound:hover,
         .sound:active {
@@ -433,22 +383,6 @@
         decoding="async"
       />
     </div>
-    <section class="seatmap" aria-labelledby="seatmap-title">
-      <img
-        class="seatmap__img"
-        src="images/seatmap-hn-1280.webp"
-        srcset="
-          images/seatmap-hn-720.webp   720w,
-          images/seatmap-hn-1280.webp 1280w
-        "
-        sizes="min(100vw, 960px)"
-        width="1280"
-        height="1112"
-        alt="Sơ đồ chỗ ngồi TIX3 của Bức Tường: sân khấu ở phía trước; khu Tháng 3 sát sân khấu, tiếp theo là khu Đi Về Phía Mùa Hè; khu Trên Đỉnh Gió phía sau, cạnh FOH; hai dãy Tháng 12 chạy dọc hai bên."
-        loading="lazy"
-        decoding="async"
-      />
-    </section>
     <button
       class="gate"
       id="enter"
@@ -522,21 +456,6 @@
             root.classList.add("is-entered");
           })
           .catch(() => {});
-        // Sơ đồ hiện màu một lần khi 35% của nó vào màn hình
-        const map = document.querySelector(".seatmap");
-        if (!("IntersectionObserver" in window)) {
-          map.classList.add("is-in");
-        } else {
-          const io = new IntersectionObserver(
-            (entries) => {
-              if (!entries.some((e) => e.isIntersecting)) return;
-              map.classList.add("is-in");
-              io.disconnect();
-            },
-            { threshold: 0.35 },
-          );
-          io.observe(map);
-        }
         gate.addEventListener("click", enter);
         show();
         b.addEventListener("click", () => {
